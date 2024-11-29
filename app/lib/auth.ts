@@ -68,4 +68,9 @@ export const registerUser = async (username: string, password: string): Promise<
 export const validateUser = async (username: string, password: string): Promise<User | null> => {
   const users = await readUsers()
   return users.find(user => user.username === username && user.password === password) || null
+}
+
+export const getUserById = async (userId: string): Promise<User | null> => {
+  const users = await readUsers()
+  return users.find(user => user.id === userId) || null
 } 

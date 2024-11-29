@@ -5,7 +5,7 @@ import { LoginForm } from '@/lib/types'
 
 type AuthFormProps = {
   mode: 'login' | 'register'
-  onSuccess: () => void
+  onSuccess: (user: any) => void
 }
 
 const AuthForm = ({ mode, onSuccess }: AuthFormProps) => {
@@ -31,7 +31,7 @@ const AuthForm = ({ mode, onSuccess }: AuthFormProps) => {
         throw new Error(data.error)
       }
 
-      onSuccess()
+      onSuccess(data.user)
     } catch (err) {
       setError(err instanceof Error ? err.message : '操作失败')
     } finally {
@@ -42,7 +42,7 @@ const AuthForm = ({ mode, onSuccess }: AuthFormProps) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-sm mx-auto">
       <div>
-        <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="username" className="block text-sm font-medium dark:text-gray-300">
           用户名
         </label>
         <input
@@ -50,7 +50,7 @@ const AuthForm = ({ mode, onSuccess }: AuthFormProps) => {
           type="text"
           value={form.username}
           onChange={e => setForm(prev => ({ ...prev, username: e.target.value }))}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           required
         />
       </div>

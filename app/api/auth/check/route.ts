@@ -1,12 +1,17 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { getUserById } from '@/lib/auth'
+import { verifyToken, getUserById } from '@/lib/auth'
 
 export async function GET() {
   try {
     const cookieStore = await cookies()
-    const userId = cookieStore.get('user_id')?.value
+    const token = cookieStore.get('auth_token')?.value
 
+    if (!token) {
+      return NextResponse.json({ user: null })
+    }
+
+    const userId = verifyToken(token)
     if (!userId) {
       return NextResponse.json({ user: null })
     }
@@ -16,9 +21,12 @@ export async function GET() {
       return NextResponse.json({ user: null })
     }
 
-    // 不返回密码
-    const { password, ...safeUser } = user
-    return NextResponse.json({ user: safeUser })
+    return NextResponse.json({
+      user: {
+        id: user.id,
+        username: user.username
+      }
+    })
   } catch (error) {
     return NextResponse.json(
       { error: '验证失败' },

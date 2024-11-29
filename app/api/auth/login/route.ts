@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { validateUser } from '@/lib/auth'
+import { validateUser, generateToken } from '@/lib/auth'
 import { cookies } from 'next/headers'
 
 export async function POST(req: Request) {
@@ -21,16 +21,23 @@ export async function POST(req: Request) {
         { status: 401 }
       )
     }
+
+    const token = generateToken(user.id)
     const cookieStore = await cookies()
-    // 设置登录cookie
-    cookieStore.set('user_id', user.id, {
+    
+    cookieStore.set('auth_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 // 7天
     })
 
-    return NextResponse.json({ user })
+    return NextResponse.json({ 
+      user: { 
+        id: user.id, 
+        username: user.username 
+      } 
+    })
   } catch (error) {
     return NextResponse.json(
       { error: '登录失败' },

@@ -1,7 +1,7 @@
 'use client'
-
 import { useState } from 'react'
 import { LoginForm } from '@/lib/types'
+import cn from "classnames"
 
 type AuthFormProps = {
   mode: 'login' | 'register'
@@ -50,7 +50,7 @@ const AuthForm = ({ mode, onSuccess }: AuthFormProps) => {
           type="text"
           value={form.username}
           onChange={e => setForm(prev => ({ ...prev, username: e.target.value }))}
-          className="w-full decoration-none outline-none font-sans p-1"
+          className="w-full decoration-none outline-none font-sans p-1 text-black"
           required
         />
       </div>
@@ -64,7 +64,7 @@ const AuthForm = ({ mode, onSuccess }: AuthFormProps) => {
           type="password"
           value={form.password}
           onChange={e => setForm(prev => ({ ...prev, password: e.target.value }))}
-          className="w-full decoration-none outline-none font-sans p-1"
+          className="w-full decoration-none outline-none font-sans p-1 text-black"
           required
         />
       </div>
@@ -76,7 +76,7 @@ const AuthForm = ({ mode, onSuccess }: AuthFormProps) => {
       <button
         type="submit"
         disabled={loading}
-        className="w-full flex justify-center py-2 px-4 hover:bg-gray-800 rounded-md"
+        className={cn("w-full flex justify-center py-2 px-4  rounded-md", mode === 'login' ? 'hover:bg-zinc-600' : 'hover:bg-slate-600')}
       >
         {loading ? '处理中...' : mode === 'login' ? '登录' : '注册'}
       </button>

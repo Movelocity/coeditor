@@ -1,14 +1,9 @@
 import { writeFile, readFile, mkdir } from 'fs/promises'
-import { join } from 'path'
+
 import { User } from './types'
 import { v4 as uuidv4 } from 'uuid'
 
-const DATA_DIR = process.env.NODE_ENV === 'production' 
-  ? '/var/tmp/notes-app' 
-  : 'C:/tmp/notes-app'
-
-const USERS_FILE = join(DATA_DIR, 'users.json')
-console.log("userfile", USERS_FILE)
+import { DATA_DIR, USERS_FILE } from './constants'
 
 // 确保数据目录存在
 const ensureDataDir = async () => {

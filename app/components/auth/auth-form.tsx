@@ -42,7 +42,7 @@ const AuthForm = ({ mode, onSuccess }: AuthFormProps) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-sm mx-auto">
       <div>
-        <label htmlFor="username" className="block text-sm font-medium dark:text-gray-300">
+        <label htmlFor="username" className="block text-sm font-medium">
           用户名
         </label>
         <input
@@ -50,13 +50,13 @@ const AuthForm = ({ mode, onSuccess }: AuthFormProps) => {
           type="text"
           value={form.username}
           onChange={e => setForm(prev => ({ ...prev, username: e.target.value }))}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          className="w-full decoration-none outline-none font-sans p-1"
           required
         />
       </div>
 
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="password" className="block text-sm font-medium">
           密码
         </label>
         <input
@@ -64,7 +64,7 @@ const AuthForm = ({ mode, onSuccess }: AuthFormProps) => {
           type="password"
           value={form.password}
           onChange={e => setForm(prev => ({ ...prev, password: e.target.value }))}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          className="w-full decoration-none outline-none font-sans p-1"
           required
         />
       </div>
@@ -76,7 +76,7 @@ const AuthForm = ({ mode, onSuccess }: AuthFormProps) => {
       <button
         type="submit"
         disabled={loading}
-        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+        className="w-full flex justify-center py-2 px-4 hover:bg-gray-800 rounded-md"
       >
         {loading ? '处理中...' : mode === 'login' ? '登录' : '注册'}
       </button>

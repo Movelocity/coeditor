@@ -15,7 +15,7 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang="zh">
-      <body className="min-h-screen bg-gray-900">
+      <body className="min-h-screen bg-stone-900">
         <AppProvider>
           {children}
         </AppProvider>

@@ -27,7 +27,7 @@ export const Resizable = ({ leftPanel, rightPanel, collapsed, onCollapse }: Resi
 
   return (
     <div 
-      className="flex h-[calc(100vh-2rem)]"
+      className="flex h-[calc(90vh-1rem)]"
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}

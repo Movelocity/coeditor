@@ -23,7 +23,7 @@ const DocumentsEditor = ({ type = 'private' }: DocumentsEditorProps) => {
         collapsed={isCollapsed}
         onCollapse={setIsCollapsed}
         leftPanel={
-          <div className="h-full bg-gray-900 rounded-lg relative">
+          <div className="h-full bg-gray-800 rounded-l-lg relative">
             <DocumentList 
               onSelect={setSelectedDoc} 
               selectedPath={selectedDoc}

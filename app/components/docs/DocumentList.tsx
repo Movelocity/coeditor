@@ -64,7 +64,7 @@ const DocumentList = ({ onSelect, selectedPath, type }: DocumentListProps) => {
       {/* New Document Button */}
       <button
         onClick={handleCreateDocument}
-        className="flex items-center space-x-2 w-full p-2 rounded-md hover:bg-gray-800/50 text-gray-400"
+        className="flex items-center space-x-2 w-full p-2 rounded-md hover:bg-gray-700/50 text-gray-400"
       >
         <PlusIcon className="w-4 h-4" />
         <span>New Document</span>
@@ -76,7 +76,7 @@ const DocumentList = ({ onSelect, selectedPath, type }: DocumentListProps) => {
           key={file.path}
           onClick={() => onSelect(file.path)}
           className={`flex items-center p-2 rounded-md cursor-pointer transition-colors
-            ${selectedPath === file.path ? 'bg-gray-800' : 'hover:bg-gray-800/50'}`}
+            ${selectedPath === file.path ? 'bg-gray-700' : 'hover:bg-gray-600/50'}`}
           role="button"
           tabIndex={0}
           onKeyDown={(e) => e.key === 'Enter' && onSelect(file.path)}

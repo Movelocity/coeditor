@@ -44,21 +44,6 @@ const saveUsers = async (users: User[]) => {
   await writeFile(USERS_FILE, JSON.stringify(users, null, 2))
 }
 
-// 添加环境变量类型声明
-declare global {
-  namespace NodeJS {
-    interface ProcessEnv {
-      SUPER_USER_USERNAME: string
-      SUPER_USER_PASSWORD: string
-    }
-  }
-}
-
-// 添加超级用户验证函数
-const validateSuperUser = (username: string, password: string): boolean => {
-  return username === process.env.SUPER_USER_USERNAME && 
-         password === process.env.SUPER_USER_PASSWORD
-}
 
 // Add password hashing functions
 const hashPassword = (password: string): string => {

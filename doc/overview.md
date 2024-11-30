@@ -85,5 +85,3 @@ endLine: 81
 项目可以部署到 Vercel 平台，支持以下环境变量配置：
 - `JWT_SECRET`: JWT 签名密钥
 - `DATA_DIR`: 数据存储目录
-- `SUPER_USER_USERNAME`: 超级用户用户名（仅开发环境）
-- `SUPER_USER_PASSWORD`: 超级用户密码（仅开发环境）

@@ -6,10 +6,9 @@ import { JWT_SECRET } from '../constants'
 
 import { writeFile, readFile, mkdir } from 'fs/promises'
 
-import { v4 as uuidv4 } from 'uuid'
 import { User } from '../types'
 import { DATA_DIR, USERS_FILE } from '../constants'
-
+import crypto from 'crypto'
 
 // 确保数据目录存在
 const ensureDataDir = async () => {
@@ -61,9 +60,23 @@ const validateSuperUser = (username: string, password: string): boolean => {
          password === process.env.SUPER_USER_PASSWORD
 }
 
+// Add password hashing functions
+const hashPassword = (password: string): string => {
+  const salt = crypto.randomBytes(16).toString('hex')
+  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex')
+  return `${salt}:${hash}`
+}
 
+const verifyPassword = (password: string, hashedPassword: string): boolean => {
+  const [salt, storedHash] = hashedPassword.split(':')
+  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex')
+  return storedHash === hash
+}
 
-
+// Simple ID generation function
+const generateId = (): string => {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2)
+}
 
 export const registerUser = async (email: string, username: string, password: string): Promise<User | null> => {
   const users = await readUsers()
@@ -73,49 +86,45 @@ export const registerUser = async (email: string, username: string, password: st
   }
 
   const newUser: User = {
-    id: uuidv4(),
+    id: generateId(),
     email,
     username,
-    password, // 实际项目中应该加密
+    password: hashPassword(password),
     createdAt: new Date().toISOString()
   }
 
   users.push(newUser)
   await saveUsers(users)
-  return newUser
+  
+  // Don't return password in response
+  const { password: _, ...userWithoutPassword } = newUser
+  return userWithoutPassword as User
 }
 
 // 修改 validateUser 函数
 export const validateUser = async (email: string, password: string): Promise<User | null> => {
-  if (process.env.NODE_ENV === 'development' && validateSuperUser(email, password)) {
-    return {
-      id: 'super-admin',
-      email: process.env.SUPER_USER_USERNAME,
-      username: 'Super Admin',
-      password: process.env.SUPER_USER_PASSWORD,
-      createdAt: new Date().toISOString()
-    }
-  }
-
   const users = await readUsers()
-  return users.find(user => user.email === email && user.password === password) || null
+  const user = users.find(user => user.email === email)
+  
+  if (!user || !verifyPassword(password, user.password)) {
+    return null
+  }
+  
+  // Don't return password in response
+  const { password: _, ...userWithoutPassword } = user
+  return userWithoutPassword as User
 }
 
 // 修改 getUserById 函数
 export const getUserById = async (userId: string): Promise<User | null> => {
-  // 开发环境下处理超级用户
-  if (process.env.NODE_ENV === 'development' && userId === 'super-admin') {
-    return {
-      id: 'super-admin',
-      email: process.env.SUPER_USER_USERNAME,
-      username: process.env.SUPER_USER_USERNAME,
-      password: process.env.SUPER_USER_PASSWORD,
-      createdAt: new Date().toISOString()
-    }
-  }
-
   const users = await readUsers()
-  return users.find(user => user.id === userId) || null
+  const user = users.find(user => user.id === userId)
+  
+  if (!user) return null
+  
+  // Don't return password in response
+  const { password: _, ...userWithoutPassword } = user
+  return userWithoutPassword as User
 } 
 
 // 添加生成token的函数

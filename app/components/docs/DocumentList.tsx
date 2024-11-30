@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useApp } from '@/contexts/AppContext'
 import { FileItem } from '@/lib/types'
-import { fetchUserDocuments, createDocument } from '@/lib/api/docs'
+import { fetchUserDocuments, createDocument } from '@/lib/frontend/docs'
 import { PlusIcon, XMarkIcon, CheckIcon } from '@heroicons/react/24/outline'
 
 interface DocumentListProps {

@@ -1,10 +1,9 @@
 import { useApp } from "@/contexts/AppContext"
 import { ArrowRightEndOnRectangleIcon } from "@heroicons/react/24/outline"
-
 const LogoutButton = () => {
   const { logout } = useApp()
   
-  const handleLogout = () => {
+  const handleLogout = async () => {
     logout()
   }
 

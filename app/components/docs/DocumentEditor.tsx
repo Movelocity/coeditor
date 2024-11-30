@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useApp } from '@/contexts/AppContext'
-import { fetchDocument, saveDocument } from '@/lib/api/docs'
+import { fetchDocument, saveDocument } from '@/lib/frontend/docs'
 
 interface DocumentEditorProps {
   path: string

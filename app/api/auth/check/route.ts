@@ -7,17 +7,17 @@ export async function GET() {
     const cookieStore = await cookies()
     const token = cookieStore.get('auth_token')?.value
     if (!token) {
-      return NextResponse.json({ user: null })
+      return NextResponse.json({})
     }
 
     const userId = verifyToken(token)
     if (!userId) {
-      return NextResponse.json({ user: null })
+      return NextResponse.json({})
     }
 
     const user = await getUserById(userId)
     if (!user) {
-      return NextResponse.json({ user: null })
+      return NextResponse.json({})
     }
 
     return NextResponse.json({

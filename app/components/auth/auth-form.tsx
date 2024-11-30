@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { login, register } from '@/lib/api/auth'
+import { login, register } from '@/lib/frontend/auth'
 
 interface AuthFormProps {
   mode: 'login' | 'register'

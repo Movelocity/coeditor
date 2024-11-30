@@ -7,9 +7,11 @@ export async function GET(
   { params }: { params: { userId: string } }
 ) {
   const { userId } = await params
-  const authUserId = await authenticateUser()
-  if (!authUserId || authUserId !== userId) {
-    return unauthorized()
+  if (userId !== 'public') {
+    const authUserId = await authenticateUser()
+    if (!authUserId || authUserId !== userId) {
+      return unauthorized()
+    }
   }
 
   const searchParams = request.nextUrl.searchParams

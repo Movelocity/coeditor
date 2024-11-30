@@ -7,10 +7,11 @@ export async function GET(
   { params }: { params: Promise<{ userId: string; path: string[] }> }
 ) {
   const { userId, path } = await params
-  
-  const authUserId = await validateAuthToken()
-  if (!authUserId || authUserId !== userId) {
-    return createErrorResponse('未授权访问', 401)
+  if (userId !== 'public') {
+    const authUserId = await validateAuthToken()
+    if (!authUserId || authUserId !== userId) {
+      return createErrorResponse('未授权访问', 401)
+    }
   }
 
   const docManager = new DocumentManager(userId)
@@ -34,9 +35,11 @@ export async function POST(
 ) {
   const { userId, path } = await params
   console.log("userId: ", userId, "path: ", path)
-  const authUserId = await validateAuthToken()
-  if (!authUserId || authUserId !== userId) {
-    return createErrorResponse('未授权访问', 401)
+  if (userId !== 'public') {
+    const authUserId = await validateAuthToken()
+    if (!authUserId || authUserId !== userId) {
+      return createErrorResponse('未授权访问', 401)
+    }
   }
 
   try {

@@ -1,7 +1,8 @@
 'use client'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import LogoutButton from "@/components/auth/LogoutButton"
+import LogoutBtn from "@/components/auth/LogoutBtn"
+import LoginBtn from "@/components/auth/LoginBtn"
 import cn from "classnames"
 interface BannerProps {
   title: string
@@ -10,27 +11,46 @@ interface BannerProps {
   showTabs?: boolean
   children?: React.ReactNode
   className?: string
+  defaultTab?: 'public' | 'private'
+  onTabChange?: (tab: string) => void
 }
 
-const Banner = ({ title, description, username="", showTabs = false, children, className }: BannerProps) => {
+const Banner = ({ title, description, username, showTabs = false, children, className, defaultTab = 'private', onTabChange }: BannerProps) => {
+
+
+
   return (
     <>
       <div className={cn("fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-sm border-b border-gray-800", className)}>
         <div className="h-16 px-4 max-w-7xl mx-auto">
           {showTabs ? (
-            <Tabs defaultValue="private" className="h-full">
+            <Tabs 
+              defaultValue={defaultTab} 
+              className="h-full"
+              onValueChange={onTabChange}
+            >
               <div className="flex items-center justify-between h-full">
                 <div className="flex items-center space-x-4">
                   <h1 className="text-xl font-bold text-gray-200">{title}</h1>
                   <p className="text-sm text-gray-400">{description}</p>
                 </div>
                 <TabsList className="grid grid-cols-2 w-[200px]">
-                  <TabsTrigger value="private">Private</TabsTrigger>
                   <TabsTrigger value="public">Public</TabsTrigger>
+                  <TabsTrigger value="private">Private</TabsTrigger>
                 </TabsList>
-                <span className="text-sm text-gray-400 flex flex-row items-center gap-2">
-                  {username} <LogoutButton />
-                </span>
+                
+                {
+                  username ? (
+                    <span className="text-sm text-gray-400 flex flex-row items-center gap-2">
+                    {username} <LogoutBtn />
+                    </span>
+                  )
+                  :(
+                    <span className="text-sm text-gray-400 flex flex-row items-center gap-2">
+                    Login <LoginBtn />
+                    </span>
+                  )
+                }
               </div>
 
               {/* Content area */}

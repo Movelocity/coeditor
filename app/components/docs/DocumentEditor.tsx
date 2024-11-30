@@ -1,61 +1,49 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useApp } from '@/contexts/AppContext'
 import { fetchDocument, saveDocument } from '@/lib/frontend/docs'
 
 interface DocumentEditorProps {
   path: string
-  onSave?: () => void
+  type: 'public' | 'private'
 }
 
-const DocumentEditor = ({ path, onSave }: DocumentEditorProps) => {
+const DocumentEditor = ({ path, type }: DocumentEditorProps) => {
   const { user } = useApp()
   const [content, setContent] = useState('')
-  const [saving, setSaving] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string>('')
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string>()
+  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
-    const fetchDoc = async () => {
-      if (!user) return
-      setLoading(true)
-      
+    const loadDocument = async () => {
+      if (!path || !user?.id) return
       try {
-        const content = await fetchDocument(user.id, path)
-        setContent(content)
+        setIsLoading(true)
+        console.log("fetching document", user?.id, path, type)
+        const documentContent = await fetchDocument(user?.id, path, type)
+        setContent(documentContent)
+        setError(undefined)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load document')
+        setError('Failed to load document')
+        console.error(err)
       } finally {
-        setLoading(false)
+        setIsLoading(false)
       }
     }
 
-    fetchDoc()
-  }, [path, user])
+    loadDocument()
+  }, [path, user?.id])
 
-  useEffect(() => {
-    const autoSaveInterval = setInterval(() => {
-      if (content !== '') {
-        handleSave()
-      }
-    }, 30*1000)
-
-    return () => clearInterval(autoSaveInterval)
-  }, [content])
-
-  const handleSave = async () => {
-    if (!user) return
-    setSaving(true)
-    setError('')
-
+  const handleSave = useCallback(async () => {
     try {
-      await saveDocument(user.id, path, content)
-      onSave?.()
+      setIsSaving(true)
+      await saveDocument(user?.id, path, content, type)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save')
+      console.error('Failed to save document:', err)
     } finally {
-      setSaving(false)
+      setIsSaving(false)
     }
-  }
+  }, [content, path, user?.id, type])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 's') {
@@ -64,7 +52,7 @@ const DocumentEditor = ({ path, onSave }: DocumentEditorProps) => {
     }
   }
 
-  if (loading) {
+  if (isLoading) {
     return <div className="flex items-center justify-center h-full text-gray-400">Loading document...</div>
   }
 
@@ -74,10 +62,10 @@ const DocumentEditor = ({ path, onSave }: DocumentEditorProps) => {
         <h2 className="text-xl font-semibold text-gray-200 truncate">{path}</h2>
         <button
           onClick={handleSave}
-          disabled={saving}
+          disabled={isSaving}
           className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
         >
-          {saving ? 'Saving...' : 'Save'}
+          {isSaving ? 'Saving...' : 'Save'}
         </button>
       </div>
 

@@ -1,7 +1,13 @@
 import { FileItem } from '@/lib/types'
 
-export const fetchUserDocuments = async (userId: string): Promise<FileItem[]> => {
-  const response = await fetch(`/api/docs/${userId?userId:'public'}/list`)
+const getUserIdForRequest = (userId: string | undefined, type: 'public' | 'private'): string => {
+  if (type === 'public') return 'public'
+  return userId || 'public'
+}
+
+export const fetchUserDocuments = async (userId: string | undefined, type: 'public' | 'private' = 'private'): Promise<FileItem[]> => {
+  const requestUserId = getUserIdForRequest(userId, type)
+  const response = await fetch(`/api/docs/${requestUserId}/list`)
   if (!response.ok) {
     throw new Error('Failed to fetch documents')
   }
@@ -9,8 +15,9 @@ export const fetchUserDocuments = async (userId: string): Promise<FileItem[]> =>
   return data.files
 }
 
-export const fetchDocument = async (userId: string, path: string): Promise<string> => {
-  const response = await fetch(`/api/docs/${userId?userId:'public'}/${path}`)
+export const fetchDocument = async (userId: string | undefined, path: string, type: 'public' | 'private' = 'private'): Promise<string> => {
+  const requestUserId = getUserIdForRequest(userId, type)
+  const response = await fetch(`/api/docs/${requestUserId}/${path}`)
   if (!response.ok) {
     throw new Error('Failed to load document')
   }
@@ -18,8 +25,9 @@ export const fetchDocument = async (userId: string, path: string): Promise<strin
   return data.content
 }
 
-export const saveDocument = async (userId: string, path: string, content: string): Promise<void> => {
-  const response = await fetch(`/api/docs/${userId?userId:'public'}/${path}`, {
+export const saveDocument = async (userId: string | undefined, path: string, content: string, type: 'public' | 'private' = 'private'): Promise<void> => {
+  const requestUserId = getUserIdForRequest(userId, type)
+  const response = await fetch(`/api/docs/${requestUserId}/${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ content })
@@ -30,14 +38,14 @@ export const saveDocument = async (userId: string, path: string, content: string
   }
 }
 
-export const createDocument = async (userId: string, fileName: string): Promise<string> => {
-  // Add .md suffix if no extension exists
+export const createDocument = async (userId: string | undefined, fileName: string, type: 'public' | 'private' = 'private'): Promise<string> => {
+  const requestUserId = getUserIdForRequest(userId, type)
   const path = fileName.includes('.') ? fileName : `${fileName}.md`
 
-  const response = await fetch(`/api/docs/${userId?userId:'public'}/${path}`, {
+  const response = await fetch(`/api/docs/${requestUserId}/${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content: path })
+    body: JSON.stringify({ content: '' })
   })
 
   if (!response.ok) {

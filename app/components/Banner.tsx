@@ -13,9 +13,10 @@ interface BannerProps {
   className?: string
   defaultTab?: 'public' | 'private'
   onTabChange?: (tab: string) => void
+  currentTab?: string
 }
 
-const Banner = ({ title, description, username, showTabs = false, children, className, defaultTab = 'private', onTabChange }: BannerProps) => {
+const Banner = ({ title, description, username, showTabs = false, children, className, defaultTab = 'private', onTabChange, currentTab }: BannerProps) => {
 
 
 
@@ -25,7 +26,8 @@ const Banner = ({ title, description, username, showTabs = false, children, clas
         <div className="h-16 px-4 max-w-7xl mx-auto">
           {showTabs ? (
             <Tabs 
-              defaultValue={defaultTab} 
+              defaultValue={defaultTab}
+              value={currentTab} 
               className="h-full"
               onValueChange={onTabChange}
             >

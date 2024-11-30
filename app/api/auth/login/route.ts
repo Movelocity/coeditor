@@ -1,47 +1,25 @@
-import { NextResponse } from 'next/server'
-import { validateUser, generateToken } from '@/lib/auth'
+import { validateUser, generateToken } from '@/lib/backend/auth_utils'
+import { createAuthResponse, createErrorResponse } from '@/lib/backend/auth_utils'
 import { cookies } from 'next/headers'
-
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const { username, password } = await req.json()
-    
-    if (!username || !password) {
-      return NextResponse.json(
-        { error: '用户名和密码不能为空' },
-        { status: 400 }
-      )
-    }
-
-    const user = await validateUser(username, password)
-    
+    const { email, password } = await request.json()
+    const user = await validateUser(email, password)
+    // console.log("login: ", user, email, password)
     if (!user) {
-      return NextResponse.json(
-        { error: '用户名或密码错误' },
-        { status: 401 }
-      )
+      return createErrorResponse('用户名或密码错误', 401)
     }
 
     const token = generateToken(user.id)
+    // 设置cookie
     const cookieStore = await cookies()
-    
     cookieStore.set('auth_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 // 7天
+      maxAge: 60 * 60 * 24 * 7 // 7天
     })
-
-    return NextResponse.json({ 
-      user: { 
-        id: user.id, 
-        username: user.username 
-      } 
-    })
+    return createAuthResponse({ id: user.id, username: user.username, token })
   } catch (error) {
-    return NextResponse.json(
-      { error: '登录失败' },
-      { status: 500 }
-    )
+    return createErrorResponse('登录失败', 500)
   }
 } 

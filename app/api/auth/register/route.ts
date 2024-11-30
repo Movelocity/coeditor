@@ -1,31 +1,18 @@
-import { NextResponse } from 'next/server'
-import { registerUser } from '@/lib/auth'
+import { registerUser, generateToken } from '@/lib/backend/auth_utils'
+import { createAuthResponse, createErrorResponse } from '@/lib/backend/auth_utils'
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const { username, password } = await req.json()
-    
-    if (!username || !password) {
-      return NextResponse.json(
-        { error: '用户名和密码不能为空' },
-        { status: 400 }
-      )
-    }
-
-    const user = await registerUser(username, password)
+    const { email, username, password } = await request.json()
+    const user = await registerUser(email, username, password)
     
     if (!user) {
-      return NextResponse.json(
-        { error: '用户名已存在' },
-        { status: 409 }
-      )
+      return createErrorResponse('该邮箱或用户名已被注册', 400)
     }
 
-    return NextResponse.json({ user })
+    const token = generateToken(user.id)
+    return createAuthResponse({ user, token })
   } catch (error) {
-    return NextResponse.json(
-      { error: '注册失败' },
-      { status: 500 }
-    )
+    return createErrorResponse('注册失败', 500)
   }
 } 

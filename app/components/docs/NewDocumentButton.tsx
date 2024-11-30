@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useApp } from '@/contexts/AppContext'
-import { createDocument } from '@/request/docs'
+import { createDocument } from '@/lib/api/docs'
 
 interface NewDocumentButtonProps {
   onCreated?: (path: string) => void
@@ -12,10 +12,12 @@ const NewDocumentButton = ({ onCreated }: NewDocumentButtonProps) => {
   const [fileName, setFileName] = useState('')
 
   const handleCreate = async () => {
-    if (!user || !fileName.trim()) return
+    if (!user) return
+    const trimmedFileName = fileName.trim()
+    if (!trimmedFileName) return
 
     try {
-      const path = await createDocument(user.id, fileName)
+      const path = await createDocument(user.id, trimmedFileName)
       onCreated?.(path)
       setFileName('')
       setIsCreating(false)

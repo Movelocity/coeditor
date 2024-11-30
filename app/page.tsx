@@ -2,7 +2,9 @@
 import { useState } from 'react'
 import AuthForm from './components/auth/auth-form'
 import { useApp } from './contexts/AppContext'
-import LogoutButton from "@/components/auth/LogoutButton"
+import DocumentsEditor from '@/components/docs/DocumentsEditor'
+import PageTransition from '@/components/PageTransition'
+import Banner from '@/components/Banner'
 
 const NotesPage = () => {
   const { user, setUser } = useApp()
@@ -12,50 +14,77 @@ const NotesPage = () => {
     setUser(userData)
   }
 
+  const handleToggleMode = () => {
+    setMode(mode === 'login' ? 'register' : 'login')
+  }
+
+  console.log("user: ", user)
+
   if (!user) {
     return (
-      <div className="space-y-8 text-gray-200">
-        <header className="text-center">
-          <h1 className="text-3xl font-bold">Online Editor</h1>
-          <p className="mt-2">请先登录或注册</p>
-        </header>
+      <PageTransition>
+        <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center py-8 px-4">
+          <div className="w-full max-w-md space-y-8">
+            <Banner 
+              title="Online Editor"
+              description="欢迎使用在线编辑器"
+              className="text-center"
+            />
 
-        <AuthForm mode={mode} onSuccess={handleSuccess} />
-        
-        <div className="text-center">
-          {mode === 'login' ? '没有账号？' : '已有账号？'}
-          <button
-            onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
-            className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
-          >
-            {mode === 'login' ? '点击注册' : '点击登录'}
-          </button>
+            <div className="bg-white/5 backdrop-blur-lg rounded-xl p-6 shadow-2xl space-y-6">
+              <div className="flex justify-center space-x-4 mb-6">
+                <button
+                  onClick={() => setMode('login')}
+                  className={`px-4 py-2 rounded-lg transition-all ${
+                    mode === 'login'
+                      ? 'bg-indigo-600 text-white'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  登录
+                </button>
+                <button
+                  onClick={() => setMode('register')}
+                  className={`px-4 py-2 rounded-lg transition-all ${
+                    mode === 'register'
+                      ? 'bg-indigo-600 text-white'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  注册
+                </button>
+              </div>
+
+              <AuthForm mode={mode} onSuccess={handleSuccess} />
+              
+              <p className="text-center text-sm text-gray-400">
+                {mode === 'login' ? '还没有账号？' : '已经有账号？'}
+                <button
+                  onClick={handleToggleMode}
+                  className="ml-2 text-indigo-400 hover:text-indigo-300 transition-colors"
+                >
+                  {mode === 'login' ? '立即注册' : '立即登录'}
+                </button>
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
+      </PageTransition>
     )
   }
 
   return (
-    <div className="space-y-8 text-gray-300 px-4">
-      <header className="text-center">
-        <h1 className="text-3xl font-bold">Online Editor</h1>
-        <p className="mt-2">记录您的想法和灵感</p>
-      </header>
-      
-      <div className="grid gap-6 md:grid-cols-2">
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Public Notes</h2>
-          {/* 后续添加公开笔记列表组件 */}
-        </section>
-        
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Private Notes</h2>
-          {/* 后续添加私人笔记列表组件 */}
-        </section>
+    <PageTransition>
+      <div className="px-4">
+        <Banner 
+          title="Online Editor"
+          description="记录您的想法和灵感"
+          showTabs
+        >
+          <DocumentsEditor type="private" />
+        </Banner>
       </div>
-
-      <LogoutButton />
-    </div>
+    </PageTransition>
   )
 }
 

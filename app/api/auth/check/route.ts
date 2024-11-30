@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { verifyToken, getUserById } from '@/lib/auth'
+import { verifyToken, getUserById } from '@/lib/backend/auth_utils'
 
 export async function GET() {
   try {
     const cookieStore = await cookies()
     const token = cookieStore.get('auth_token')?.value
-
     if (!token) {
       return NextResponse.json({ user: null })
     }
@@ -22,10 +21,8 @@ export async function GET() {
     }
 
     return NextResponse.json({
-      user: {
-        id: user.id,
-        username: user.username
-      }
+      id: user.id,
+      username: user.username
     })
   } catch (error) {
     return NextResponse.json(

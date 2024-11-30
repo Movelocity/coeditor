@@ -37,7 +37,7 @@ export const createDocument = async (userId: string, fileName: string): Promise<
   const response = await fetch(`/api/docs/${userId}/${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content: '' })
+    body: JSON.stringify({ content: path })
   })
 
   if (!response.ok) {

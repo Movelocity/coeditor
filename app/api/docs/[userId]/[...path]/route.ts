@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { validateAuthToken, createAuthResponse, createErrorResponse } from '@/lib/auth_utils'
+import { validateAuthToken, createAuthResponse, createErrorResponse } from '@/lib/backend/auth_utils'
 import { DocumentManager } from '@/lib/documentManager'
 
 export async function GET(
@@ -21,7 +21,6 @@ export async function GET(
   }
 
   const result = await docManager.readDocument(filePath)
-  console.log("result: ", result)
   if ('error' in result) {
     return createErrorResponse(result.error??"err", result.status)
   }

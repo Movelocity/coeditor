@@ -26,7 +26,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         const response = await fetch('/api/auth/check')
         if (response.ok) {
           const data = await response.json()
-          setUser(data.user)
+          setUser(data)
         }
       } catch (error) {
         console.error('认证检查失败:', error)

@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useApp } from '@/contexts/AppContext'
 import { FileItem } from '@/lib/types'
-import { fetchUserDocuments } from '@/request/docs'
+import { fetchUserDocuments } from '@/lib/api/docs'
 
 interface DocumentListProps {
-  onSelect: (path: string) => void
+  onSelect: (path: string | null) => void
   selectedPath: string | null
+  type: 'public' | 'private'
 }
 
-const DocumentList = ({ onSelect, selectedPath }: DocumentListProps) => {
+const DocumentList = ({ onSelect, selectedPath, type }: DocumentListProps) => {
   const { user } = useApp()
   const [files, setFiles] = useState<FileItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -16,7 +17,6 @@ const DocumentList = ({ onSelect, selectedPath }: DocumentListProps) => {
   useEffect(() => {
     const fetchFiles = async () => {
       if (!user) return
-      
       try {
         const files = await fetchUserDocuments(user.id)
         setFiles(files)

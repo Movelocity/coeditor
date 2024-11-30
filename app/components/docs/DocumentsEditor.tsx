@@ -2,7 +2,6 @@
 import { useState } from 'react'
 import DocumentList from '@/components/docs/DocumentList'
 import DocumentEditor from '@/components/docs/DocumentEditor'
-import NewDocumentButton from '@/components/docs/NewDocumentButton'
 import { Resizable } from "@/components/ui/Resizable"
 
 interface DocumentsEditorProps {
@@ -20,9 +19,6 @@ const DocumentsEditor = ({ type = 'private' }: DocumentsEditorProps) => {
         onCollapse={setIsCollapsed}
         leftPanel={
           <div className="h-full bg-gray-900 rounded-lg relative">
-            <div className="flex flex-row items-center justify-end px-2 py-1">
-              <NewDocumentButton onCreated={path => setSelectedDoc(path)} />
-            </div>
             <DocumentList 
               onSelect={setSelectedDoc} 
               selectedPath={selectedDoc}

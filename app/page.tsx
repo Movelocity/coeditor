@@ -79,6 +79,7 @@ const NotesPage = () => {
         <Banner 
           title="Online Editor"
           description="记录您的想法和灵感"
+          username={user.username}
           showTabs
         >
           <DocumentsEditor type="private" />

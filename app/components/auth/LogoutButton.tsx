@@ -1,4 +1,5 @@
 import { useApp } from "@/contexts/AppContext"
+import { ArrowRightEndOnRectangleIcon } from "@heroicons/react/24/outline"
 
 const LogoutButton = () => {
   const { logout } = useApp()
@@ -17,11 +18,12 @@ const LogoutButton = () => {
     <div
       onClick={handleLogout}
       onKeyDown={handleKeyDown}
-      className="flex items-center gap-2 text-muted-foreground text-gray-500 hover:bg-gray-800 rounded-md p-1 w-24 text-center cursor-pointer"
+      className="flex items-center justify-center p-2 text-muted-foreground hover:bg-gray-800 rounded-md cursor-pointer"
       aria-label="退出登录"
+      title="退出登录"
       tabIndex={0}
     >
-      退出登录
+      <ArrowRightEndOnRectangleIcon className="h-5 w-5" />
     </div>
   )
 }

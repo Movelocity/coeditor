@@ -6,12 +6,13 @@ import cn from "classnames"
 interface BannerProps {
   title: string
   description: string
+  username?: string
   showTabs?: boolean
   children?: React.ReactNode
   className?: string
 }
 
-const Banner = ({ title, description, showTabs = false, children, className }: BannerProps) => {
+const Banner = ({ title, description, username="", showTabs = false, children, className }: BannerProps) => {
   return (
     <>
       <div className={cn("fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-sm border-b border-gray-800", className)}>
@@ -27,7 +28,9 @@ const Banner = ({ title, description, showTabs = false, children, className }: B
                   <TabsTrigger value="private">Private</TabsTrigger>
                   <TabsTrigger value="public">Public</TabsTrigger>
                 </TabsList>
-                <LogoutButton />
+                <span className="text-sm text-gray-400 flex flex-row items-center gap-2">
+                  {username} <LogoutButton />
+                </span>
               </div>
 
               {/* Content area */}

@@ -1,49 +1,65 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { authenticateUser, unauthorized } from '@/lib/authMiddleware'
-import { readUserFile, saveUserFile } from '@/lib/userFiles'
+import { NextRequest } from 'next/server'
+import { validateAuthToken, createAuthResponse, createErrorResponse } from '@/lib/auth_utils'
+import { DocumentManager } from '@/lib/documentManager'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { userId: string; path: string[] } }
+  { params }: { params: Promise<{ userId: string; path: string[] }> }
 ) {
-  const authUserId = await authenticateUser()
-  if (!authUserId || authUserId !== params.userId) {
-    return unauthorized()
+  const { userId, path } = await params
+  
+  const authUserId = await validateAuthToken()
+  if (!authUserId || authUserId !== userId) {
+    return createErrorResponse('未授权访问', 401)
   }
 
-  const filePath = params.path.join('/')
-  const content = await readUserFile(params.userId, filePath)
+  const docManager = new DocumentManager(userId)
+  const filePath = path.join('/')
 
-  if (content === null) {
-    return NextResponse.json(
-      { error: '文档不存在' },
-      { status: 404 }
-    )
+  if (!docManager.validatePath(filePath)) {
+    return createErrorResponse('无效的文件路径', 400)
   }
 
-  return NextResponse.json({ content })
+  const result = await docManager.readDocument(filePath)
+  console.log("result: ", result)
+  if ('error' in result) {
+    return createErrorResponse(result.error??"err", result.status)
+  }
+
+  return createAuthResponse(result)
 }
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { userId: string; path: string[] } }
+  { params }: { params: Promise<{ userId: string; path: string[] }> }
 ) {
-  const authUserId = await authenticateUser()
-  if (!authUserId || authUserId !== params.userId) {
-    return unauthorized()
+  const { userId, path } = await params
+  console.log("userId: ", userId, "path: ", path)
+  const authUserId = await validateAuthToken()
+  if (!authUserId || authUserId !== userId) {
+    return createErrorResponse('未授权访问', 401)
   }
 
   try {
     const { content } = await request.json()
-    const filePath = params.path.join('/')
-    
-    await saveUserFile(params.userId, filePath, content)
-    
-    return NextResponse.json({ success: true })
+    if (!content) {
+      return createErrorResponse('内容不能为空', 400)
+    }
+
+    const docManager = new DocumentManager(userId)
+    const filePath = path.join('/')
+
+    if (!docManager.validatePath(filePath)) {
+      return createErrorResponse('无效的文件路径', 400)
+    }
+
+    const result = await docManager.saveDocument(filePath, content)
+    if ('error' in result) {
+      return createErrorResponse(result.error??"err", result.status)
+    }
+
+    return createAuthResponse(result)
   } catch (error) {
-    return NextResponse.json(
-      { error: '保存失败' },
-      { status: 500 }
-    )
+    return createErrorResponse('请求处理失败', 500)
   }
 }

@@ -6,8 +6,9 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { userId: string } }
 ) {
+  const { userId } = await params
   const authUserId = await authenticateUser()
-  if (!authUserId || authUserId !== params.userId) {
+  if (!authUserId || authUserId !== userId) {
     return unauthorized()
   }
 
@@ -15,7 +16,7 @@ export async function GET(
   const path = searchParams.get('path') || ''
 
   try {
-    const files = await listUserFiles(params.userId, path)
+    const files = await listUserFiles(userId, path)
     return NextResponse.json({ files })
   } catch (error) {
     return NextResponse.json(

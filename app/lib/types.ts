@@ -11,3 +11,9 @@ export type LoginForm = {
 }
 
 export type RegisterForm = LoginForm 
+
+export type FileItem = {
+  name: string;
+  type: 'file' | 'directory';
+  path: string;
+}

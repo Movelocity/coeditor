@@ -1,12 +1,8 @@
 import { promises as fs } from 'fs';
 import { join, dirname } from 'path';
 import { USER_FILES_DIR } from './constants';
+import { FileItem } from './types';
 
-interface FileItem {
-  name: string;
-  type: 'file' | 'directory';
-  path: string;
-}
 
 // 创建用户目录
 // const createUserDirectory = async (userId: string): Promise<void> => {

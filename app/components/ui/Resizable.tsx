@@ -42,15 +42,13 @@ export const Resizable = ({ leftPanel, rightPanel, collapsed, onCollapse }: Resi
       </div>
       
       <div
-        className="w-1 bg-gray-800 hover:bg-indigo-600 cursor-col-resize flex items-center"
+        className="w-1 bg-gray-800 hover:bg-sky-600 cursor-col-resize flex items-center"
         onMouseDown={handleMouseDown}
       >
         <button
           onClick={() => onCollapse(!collapsed)}
           className="w-4 h-12 bg-gray-700 hover:bg-gray-600 rounded-full flex items-center justify-center"
         >
-          {/* <ChevronIcon className={`w-4 h-4 transform ${collapsed ? 'rotate-0' : 'rotate-180'}`} /> */}
-          <span className={`w-4 h-4 transform ${collapsed ? 'rotate-0' : 'rotate-180'}`} >||</span>
         </button>
       </div>
 

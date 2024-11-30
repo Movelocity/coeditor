@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useApp } from '@/contexts/AppContext'
 import { FileItem } from '@/lib/types'
+import { fetchUserDocuments } from '@/request/docs'
 
 interface DocumentListProps {
   onSelect: (path: string) => void
@@ -17,11 +18,8 @@ const DocumentList = ({ onSelect, selectedPath }: DocumentListProps) => {
       if (!user) return
       
       try {
-        const response = await fetch(`/api/docs/${user.id}/list`)
-        if (response.ok) {
-          const data = await response.json()
-          setFiles(data.files)
-        }
+        const files = await fetchUserDocuments(user.id)
+        setFiles(files)
       } catch (error) {
         console.error('Failed to fetch files:', error)
       } finally {

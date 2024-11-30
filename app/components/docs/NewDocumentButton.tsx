@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useApp } from '@/contexts/AppContext'
-// import { PlusIcon } from '@heroicons/react/24/solid'
+import { createDocument } from '@/request/docs'
 
 interface NewDocumentButtonProps {
   onCreated?: (path: string) => void
@@ -15,17 +15,8 @@ const NewDocumentButton = ({ onCreated }: NewDocumentButtonProps) => {
     if (!user || !fileName.trim()) return
 
     try {
-      const response = await fetch(`/api/docs/${user.id}/${fileName}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: 'start' })
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to create document')
-      }
-
-      onCreated?.(fileName)
+      const path = await createDocument(user.id, fileName)
+      onCreated?.(path)
       setFileName('')
       setIsCreating(false)
     } catch (error) {

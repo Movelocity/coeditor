@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useApp } from '@/contexts/AppContext'
+import { fetchDocument, saveDocument } from '@/request/docs'
 
 interface DocumentEditorProps {
   path: string
@@ -14,15 +15,13 @@ const DocumentEditor = ({ path, onSave }: DocumentEditorProps) => {
   const [error, setError] = useState<string>('')
 
   useEffect(() => {
-    const fetchDocument = async () => {
+    const fetchDoc = async () => {
       if (!user) return
       setLoading(true)
       
       try {
-        const response = await fetch(`/api/docs/${user.id}/${path}`)
-        if (!response.ok) throw new Error('Failed to load document')
-        const data = await response.json()
-        setContent(data.content)
+        const content = await fetchDocument(user.id, path)
+        setContent(content)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load document')
       } finally {
@@ -30,7 +29,7 @@ const DocumentEditor = ({ path, onSave }: DocumentEditorProps) => {
       }
     }
 
-    fetchDocument()
+    fetchDoc()
   }, [path, user])
 
   useEffect(() => {
@@ -49,16 +48,7 @@ const DocumentEditor = ({ path, onSave }: DocumentEditorProps) => {
     setError('')
 
     try {
-      const response = await fetch(`/api/docs/${user.id}/${path}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content })
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to save document')
-      }
-
+      await saveDocument(user.id, path, content)
       onSave?.()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save')
@@ -99,8 +89,9 @@ const DocumentEditor = ({ path, onSave }: DocumentEditorProps) => {
         value={content}
         onChange={(e) => setContent(e.target.value)}
         onKeyDown={handleKeyDown}
-        className="flex-1 p-4 bg-gray-800 text-gray-200 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 font-['Consolas']"
+        className="flex-1 p-4 bg-gray-800 text-gray-200 rounded-md resize-none focus:outline-none font-['Consolas']"
         placeholder="Start writing..."
+        spellCheck={false}
       />
     </div>
   )

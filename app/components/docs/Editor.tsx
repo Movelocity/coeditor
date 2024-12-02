@@ -32,7 +32,7 @@ const DocumentEditor = ({ path, type }: DocumentEditorProps) => {
     }
 
     loadDocument()
-  }, [path, user?.id])
+  }, [path, user?.id]) // type 不能加入依赖，否则切换type的时候path来不及切换，导致在错误的空间里搜索path
 
   const handleSave = useCallback(async () => {
     try {

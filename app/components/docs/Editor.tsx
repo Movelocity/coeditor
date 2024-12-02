@@ -57,13 +57,13 @@ const DocumentEditor = ({ path, type }: DocumentEditorProps) => {
   }
 
   return (
-    <div className="flex flex-col h-full p-4">
-      <div className="flex justify-between items-center mb-4">
+    <div className="flex flex-col h-full">
+      <div className="flex justify-between items-center pb-4 p-2 border-b border-gray-700">
         <h2 className="text-xl font-semibold text-gray-200 truncate">{path}</h2>
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50"
+          className="px-2 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 disabled:opacity-50"
         >
           {isSaving ? 'Saving...' : 'Save'}
         </button>
@@ -77,7 +77,7 @@ const DocumentEditor = ({ path, type }: DocumentEditorProps) => {
         value={content}
         onChange={(e) => setContent(e.target.value)}
         onKeyDown={handleKeyDown}
-        className="flex-1 p-4 bg-gray-800 text-gray-200 rounded-md resize-none focus:outline-none font-['Consolas']"
+        className="flex-1 p-4 bg-gray-800 text-gray-200 resize-none focus:outline-none font-['Consolas']"
         placeholder="Start writing..."
         spellCheck={false}
       />

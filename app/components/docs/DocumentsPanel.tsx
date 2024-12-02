@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import DocumentList from '@/components/docs/DocumentList'
-import DocumentEditor from '@/components/docs/DocumentEditor'
+import DocumentEditor from '@/components/docs/Editor'
 import { Resizable } from "@/components/ui/Resizable"
 
 interface DocumentsEditorProps {
@@ -23,7 +23,7 @@ const DocumentsEditor = ({ type = 'private' }: DocumentsEditorProps) => {
         collapsed={isCollapsed}
         onCollapse={setIsCollapsed}
         leftPanel={
-          <div className="h-full bg-gray-800 rounded-l-lg relative">
+          <div className="h-full bg-gray-900 rounded-l-lg relative">
             <DocumentList 
               onSelect={setSelectedDoc} 
               selectedPath={selectedDoc}
@@ -32,7 +32,7 @@ const DocumentsEditor = ({ type = 'private' }: DocumentsEditorProps) => {
           </div>
         }
         rightPanel={
-          <div className="h-full bg-gray-900 rounded-lg overflow-hidden">
+          <div className="h-full bg-gray-800 rounded-lg overflow-hidden">
             {selectedDoc ? (
               <DocumentEditor path={selectedDoc} type={type} />
             ) : (

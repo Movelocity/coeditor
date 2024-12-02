@@ -1,8 +1,9 @@
 import { join } from 'path'
+import os from 'os'
 
-export const DATA_DIR = process.env.NODE_ENV === 'production' 
-  ? '/var/tmp/notes-app' 
-  : 'C:/tmp/notes-app'
+export const DATA_DIR = os.platform() === 'win32' 
+  ? 'C:/tmp/notes-app'
+  : '/var/tmp/notes-app' 
 
 export const JWT_SECRET = process.env.JWT_SECRET || 'development-secret'
 

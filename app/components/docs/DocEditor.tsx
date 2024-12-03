@@ -58,7 +58,7 @@ const DocumentEditor = ({ path, type }: DocumentEditorProps) => {
     }
 
     loadDocument()
-  }, [path, type, user?.id])
+  }, [path, user?.id])
 
   const handleSave = useCallback(async () => {
     if (!hasUnsavedChanges) return

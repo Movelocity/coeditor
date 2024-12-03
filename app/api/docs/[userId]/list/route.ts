@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { authenticateUser, unauthorized } from '@/lib/authMiddleware'
-import { listUserFiles } from '@/lib/userFiles'
+import { authenticateUser, unauthorized } from '@/lib/backend/authMiddleware'
+import { listUserFiles } from '@/lib/backend/userFiles'
 
 export async function GET(
   request: NextRequest,

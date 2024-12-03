@@ -1,5 +1,5 @@
 import { useApp } from "@/contexts/AppContext"
-import { ArrowRightEndOnRectangleIcon } from "@heroicons/react/24/outline"
+import { RiLogoutBoxFill } from "react-icons/ri";
 const LogoutButton = () => {
   const { logout } = useApp()
   
@@ -22,7 +22,7 @@ const LogoutButton = () => {
       title="退出登录"
       tabIndex={0}
     >
-      <ArrowRightEndOnRectangleIcon className="h-5 w-5" />
+      <RiLogoutBoxFill className="h-5 w-5" />
     </div>
   )
 }

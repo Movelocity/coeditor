@@ -1,14 +1,14 @@
 'use client'
 import { useState, useEffect } from 'react'
-import DocumentList from '@/components/docs/DocumentList'
-import DocumentEditor from '@/components/docs/Editor'
+import DocumentList from '@/components/docs/DocList'
+import DocumentEditor from '@/components/docs/DocEditor'
 import { Resizable } from "@/components/ui/Resizable"
 
-interface DocumentsEditorProps {
+interface DocsPanelProps {
   type?: 'public' | 'private'
 }
 
-const DocumentsEditor = ({ type = 'private' }: DocumentsEditorProps) => {
+const DocsPanel = ({ type = 'private' }: DocsPanelProps) => {
   const [selectedDoc, setSelectedDoc] = useState<string | undefined>(undefined)
   const [isCollapsed, setIsCollapsed] = useState(false)
 
@@ -16,6 +16,11 @@ const DocumentsEditor = ({ type = 'private' }: DocumentsEditorProps) => {
   useEffect(() => {
     setSelectedDoc('')
   }, [type])
+
+  const handleSelectDoc = (path: string) => {
+    console.log('select doc', path)
+    setSelectedDoc(path)
+  }
 
   return (
     <div className="h-[calc(100vh-theme(spacing.32))]">
@@ -25,7 +30,7 @@ const DocumentsEditor = ({ type = 'private' }: DocumentsEditorProps) => {
         leftPanel={
           <div className="h-full bg-gray-900 rounded-l-lg relative">
             <DocumentList 
-              onSelect={setSelectedDoc} 
+              onSelect={handleSelectDoc} 
               selectedPath={selectedDoc}
               type={type}
             />
@@ -47,4 +52,4 @@ const DocumentsEditor = ({ type = 'private' }: DocumentsEditorProps) => {
   )
 }
 
-export default DocumentsEditor 
+export default DocsPanel 

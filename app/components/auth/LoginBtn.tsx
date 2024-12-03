@@ -1,4 +1,4 @@
-import { ArrowLeftEndOnRectangleIcon } from "@heroicons/react/24/outline"
+import { RiLoginBoxFill } from "react-icons/ri";
 import { useRouter } from "next/navigation"
 
 const LoginBtn = () => {
@@ -23,7 +23,7 @@ const LoginBtn = () => {
       title="登录"
       tabIndex={0}
     >
-      <ArrowLeftEndOnRectangleIcon className="h-5 w-5" />
+      <RiLoginBoxFill className="h-5 w-5" />
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import { promises as fs } from 'fs';
 import { join, dirname } from 'path';
-import { USER_FILES_DIR } from './constants';
-import { FileItem } from './types';
+import { USER_FILES_DIR } from '@/lib/constants';
+import { FileItem } from '@/lib/types';
 
 
 // 创建用户目录
@@ -45,11 +45,17 @@ export const listUserFiles = async (userId: string, subPath: string = ''): Promi
   try {
     const entries = await fs.readdir(dirPath, { withFileTypes: true });
     const files: FileItem[] = await Promise.all(
-      entries.map(async (entry) => ({
-        name: entry.name,
-        type: entry.isDirectory() ? 'directory' : 'file',
-        path: join(subPath, entry.name)
-      }))
+      entries.map(async (entry) => {
+        const isDirectory = entry.isDirectory();
+        const suffix = !isDirectory ? entry.name.split('.').pop() || '' : '';
+        const suffix_length = suffix.length==0?0:suffix.length+1;
+        return {
+          name: entry.name.slice(0, -suffix_length),
+          suffix,
+          type: isDirectory ? 'directory' : 'file',
+          path: join(subPath, entry.name)
+        };
+      })
     );
     return files;
   } catch (error) {

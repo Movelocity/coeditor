@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-import { verifyToken } from './backend/auth_utils'
+import { verifyToken } from './auth'
 import { NextResponse } from 'next/server'
 
 export const authenticateUser = async () => {

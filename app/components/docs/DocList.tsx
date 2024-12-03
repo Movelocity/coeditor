@@ -2,7 +2,8 @@ import { useEffect, useState, useCallback } from 'react'
 import { useApp } from '@/contexts/AppContext'
 import { FileItem } from '@/lib/types'
 import { fetchUserDocuments, createDocument } from '@/lib/frontend/docs'
-import { PlusIcon, XMarkIcon, CheckIcon } from '@heroicons/react/24/outline'
+import { FiPlus } from "react-icons/fi";
+import { IoMdDocument } from "react-icons/io";
 
 interface DocumentListProps {
   onSelect: (path: string) => void
@@ -66,7 +67,7 @@ const DocumentList = ({ onSelect, selectedPath, type }: DocumentListProps) => {
         onClick={handleCreateDocument}
         className="flex items-center space-x-2 w-full p-2 rounded-md hover:bg-gray-700/50 text-gray-400"
       >
-        <PlusIcon className="w-4 h-4" />
+        <FiPlus className="w-4 h-4" />
         <span>New Document</span>
       </button>
 
@@ -81,8 +82,11 @@ const DocumentList = ({ onSelect, selectedPath, type }: DocumentListProps) => {
           tabIndex={0}
           onKeyDown={(e) => e.key === 'Enter' && onSelect(file.path)}
         >
-          <span className="text-gray-200 truncate flex-1">{file.name}</span>
-          <span className="text-gray-400 text-sm ml-2">{file.type}</span>
+          <span className="text-gray-200 truncate flex-1 flex flex-row items-center">
+            <IoMdDocument className="w-4 h-4 mr-2" />
+            {file.name}
+          </span>
+          <span className="text-gray-400 text-sm ml-2">{file.suffix}</span>
         </div>
       ))}
     </div>

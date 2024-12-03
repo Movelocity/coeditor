@@ -16,10 +16,17 @@ interface BannerProps {
   currentTab?: string
 }
 
-const Banner = ({ title, description, username, showTabs = false, children, className, defaultTab = 'private', onTabChange, currentTab }: BannerProps) => {
-
-
-
+const Banner = ({ 
+  title, 
+  description, 
+  username, 
+  showTabs = false, 
+  children, 
+  className, 
+  defaultTab = 'private', 
+  onTabChange, 
+  currentTab 
+}: BannerProps) => {
   return (
     <>
       <div className={cn("fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-sm border-b border-gray-800", className)}>

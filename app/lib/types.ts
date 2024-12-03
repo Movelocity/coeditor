@@ -15,6 +15,7 @@ export type RegisterForm = LoginForm
 
 export type FileItem = {
   name: string;
+  suffix: string;
   type: 'file' | 'directory';
   path: string;
 }

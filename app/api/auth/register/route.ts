@@ -1,5 +1,4 @@
-import { registerUser, generateToken } from '@/lib/backend/auth_utils'
-import { createAuthResponse, createErrorResponse } from '@/lib/backend/auth_utils'
+import { registerUser, generateToken, createAuthResponse, createErrorResponse } from '@/lib/backend/auth'
 import { cookies } from 'next/headers'
 export async function POST(request: Request) {
   try {

@@ -17,7 +17,7 @@ const AuthPage = () => {
     setMode(mode === 'login' ? 'register' : 'login')
   }
 
-  if(user && user.id) {
+  if(user && user.username) {
     redirect('/')
   }
 

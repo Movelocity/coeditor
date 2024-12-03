@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useApp } from '@/contexts/AppContext'
-import DocumentsPanel from '@/components/docs/DocumentsPanel'
+import DocsPanel from '@/components/docs/DocsPanel'
 import PageTransition from '@/components/PageTransition'
 import Banner from '@/components/Banner'
 import { useRouter } from 'next/navigation'
@@ -12,7 +12,7 @@ const NotesPage = () => {
   const [currentTab, setCurrentTab] = useState<'public' | 'private'>(user?.id ? 'private' : 'public')
 
   const handleTabChange = (tab: string) => {
-    if (tab === 'private' && !user?.id) {
+    if (tab === 'private' && !user?.username) {
       router.push('/auth')
       return
     }
@@ -22,6 +22,7 @@ const NotesPage = () => {
   useEffect(() => {
     // Update tab when user auth state changes
     setCurrentTab(user?.id ? 'private' : 'public')
+    console.log('user', user)
   }, [user?.id])
 
   return (
@@ -36,7 +37,7 @@ const NotesPage = () => {
           defaultTab={currentTab}
           currentTab={currentTab}
         >
-          <DocumentsPanel type={currentTab} />
+          <DocsPanel type={currentTab} />
         </Banner>
       </div>
     </PageTransition>

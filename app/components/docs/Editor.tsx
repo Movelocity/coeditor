@@ -1,88 +1,78 @@
-import { useState, useEffect, useCallback } from 'react'
-import { useApp } from '@/contexts/AppContext'
-import { fetchDocument, saveDocument } from '@/lib/frontend/docs'
+import { useState, useEffect } from 'react'
+import MarkdownPreview from '@uiw/react-markdown-preview'
+import CodeEditor from '@uiw/react-textarea-code-editor'
+import '@uiw/react-markdown-preview/markdown.css'
+import styles from './Editor.module.css'
 
-interface DocumentEditorProps {
-  path: string
-  type: 'public' | 'private'
+interface EditorProps {
+  content: string
+  onChange: (content: string) => void
+  onSave: () => void
+  suffix?: string
 }
 
-const DocumentEditor = ({ path, type }: DocumentEditorProps) => {
-  const { user } = useApp()
-  const [content, setContent] = useState('')
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string>()
-  const [isSaving, setIsSaving] = useState(false)
-
-  useEffect(() => {
-    const loadDocument = async () => {
-      if (!path || !user?.id) return
-      try {
-        setIsLoading(true)
-        console.log("fetching document", user?.id, path, type)
-        const documentContent = await fetchDocument(user?.id, path, type)
-        setContent(documentContent)
-        setError(undefined)
-      } catch (err) {
-        setError('Failed to load document')
-        console.error(err)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    loadDocument()
-  }, [path, user?.id]) // type 不能加入依赖，否则切换type的时候path来不及切换，导致在错误的空间里搜索path
-
-  const handleSave = useCallback(async () => {
-    try {
-      setIsSaving(true)
-      await saveDocument(user?.id, path, content, type)
-    } catch (err) {
-      console.error('Failed to save document:', err)
-    } finally {
-      setIsSaving(false)
-    }
-  }, [content, path, user?.id, type])
+const Editor = ({ content, onChange, onSave, suffix = 'md' }: EditorProps) => {
+  const [isPreviewMode, setIsPreviewMode] = useState(false)
+  const isMarkdown = suffix === 'md'
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 's') {
       e.preventDefault()
-      handleSave()
+      onSave()
+    }
+    if ((e.metaKey || e.ctrlKey) && e.key === 'p') {
+      console.log('preview')
+      e.preventDefault()
+      setIsPreviewMode(prev => !prev)
     }
   }
 
-  if (isLoading) {
-    return <div className="flex items-center justify-center h-full text-gray-400">Loading document...</div>
-  }
-
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex justify-between items-center pb-4 p-2 border-b border-gray-700">
-        <h2 className="text-xl font-semibold text-gray-200 truncate">{path}</h2>
-        <button
-          onClick={handleSave}
-          disabled={isSaving}
-          className="px-2 py-1 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 disabled:opacity-50"
-        >
-          {isSaving ? 'Saving...' : 'Save'}
-        </button>
-      </div>
-
-      {error && (
-        <div className="text-red-500 text-sm mb-4">{error}</div>
+    <div className="flex flex-col h-full relative">
+      {isMarkdown && (
+        <div className="flex justify-end items-center pb-4 absolute top-2 right-2 z-10">
+          <button
+            onClick={() => setIsPreviewMode(prev => !prev)}
+            className="px-3 py-1 text-sm bg-gray-700 hover:bg-gray-600 rounded text-gray-200"
+          >
+            {isPreviewMode ? '编辑' : '预览'}
+          </button>
+        </div>
       )}
 
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        onKeyDown={handleKeyDown}
-        className="flex-1 p-4 bg-gray-800 text-gray-200 resize-none focus:outline-none font-['Consolas']"
-        placeholder="Start writing..."
-        spellCheck={false}
-      />
+      <div className="flex-1 relative" onKeyDown={handleKeyDown}>
+        {isMarkdown && isPreviewMode ? (
+          <div className="h-full overflow-auto p-4 prose prose-invert max-w-none">
+            <MarkdownPreview 
+              source={content} 
+              style={{ backgroundColor: '#1f2937', color: '#E5E7EB' }}
+              className={styles['markdown-preview']}
+            />
+          </div>
+        ) : (
+          isMarkdown ? (
+            <CodeEditor
+              value={content}
+              language="markdown"
+              onChange={(e) => onChange(e.target.value)}
+              padding={16}
+              style={{ fontSize: '16px', backgroundColor: '#1f2937', color: '#E5E7EB', fontFamily: 'Consolas' }}
+              placeholder="Start writing..."
+              data-color-mode="dark"
+            />
+          ) : (
+            <textarea
+              value={content}
+              onChange={(e) => onChange(e.target.value)}
+              className="h-full w-full p-4 bg-gray-800 text-gray-200 resize-none focus:outline-none font-['Consolas']"
+              placeholder="Start writing..."
+              spellCheck={false}
+            />
+          )
+        )}
+      </div>
     </div>
   )
 }
 
-export default DocumentEditor 
+export default Editor

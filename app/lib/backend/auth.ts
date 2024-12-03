@@ -2,12 +2,11 @@ import { cookies } from 'next/headers'
 // import { verifyToken } from '@/lib/auth'
 import { sign, verify } from 'jsonwebtoken'
 import { NextResponse } from 'next/server'
-import { JWT_SECRET } from '../constants'
+import { JWT_SECRET, DATA_DIR, USERS_FILE } from '@/lib/constants'
 
 import { writeFile, readFile, mkdir } from 'fs/promises'
 
-import { User } from '../types'
-import { DATA_DIR, USERS_FILE } from '../constants'
+import { User } from '@/lib/types'
 import crypto from 'crypto'
 
 // 确保数据目录存在

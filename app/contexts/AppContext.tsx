@@ -22,6 +22,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const checkAuthStatus = async () => {
+      console.log('check auth status')
       try {
         const response = await fetch('/api/auth/check')
         if (response.ok) {
@@ -30,6 +31,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         }
       } catch (error) {
         console.error('认证检查失败:', error)
+        setUser({id: 'public', username: ''})
       } finally {
         setIsLoading(false)
       }
@@ -57,7 +59,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' })
-      setUser(null)
+      setUser({id: 'public', username: ''})
     } catch (error) {
       console.error('登出失败:', error)
     }

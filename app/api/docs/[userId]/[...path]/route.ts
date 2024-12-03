@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
-import { validateAuthToken, createAuthResponse, createErrorResponse } from '@/lib/backend/auth_utils'
-import { DocumentManager } from '@/lib/documentManager'
+import { validateAuthToken, createAuthResponse, createErrorResponse } from '@/lib/backend/auth'
+import { DocumentManager } from '@/lib/backend/docManager'
 
 export async function GET(
   request: NextRequest,

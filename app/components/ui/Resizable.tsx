@@ -68,13 +68,13 @@ export const Resizable = ({ leftPanel, rightPanel, collapsed, onCollapse }: Resi
       >
         <button
           onClick={() => onCollapse(!collapsed)}
-          className="absolute -right-4 w-8 h-16 bg-gray-700 hover:bg-gray-600 rounded-r-lg flex items-center justify-center touch-manipulation"
+          className="absolute -right-4 w-5 h-12 bg-gray-700 hover:bg-gray-600 rounded-r-lg flex items-center justify-center touch-manipulation z-10"
           aria-label={collapsed ? "Expand panel" : "Collapse panel"}
         >
           {collapsed ? (
-            <FaCircleChevronRight className="w-5 h-5 text-gray-300" />
+            <FaCircleChevronRight className="w-4 h-4 text-gray-300" />
           ) : (
-            <FaCircleChevronLeft className="w-5 h-5 text-gray-300" />
+            <FaCircleChevronLeft className="w-4 h-4 text-gray-300" />
           )}
         </button>
       </div>

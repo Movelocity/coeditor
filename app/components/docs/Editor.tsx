@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import rehypeRewrite from "rehype-rewrite";
 import MarkdownPreview from '@uiw/react-markdown-preview'
 import CodeEditor from '@uiw/react-textarea-code-editor'
 import '@uiw/react-markdown-preview/markdown.css'
 
-import { WYSIWYG_Editor } from '@/components/wysiwyg/Editor'
+// import { WYSIWYG_Editor } from '@/components/wysiwyg/Editor'
 
 interface EditorProps {
   content: string
@@ -29,7 +30,7 @@ const Editor = ({ content, onChange, onSave, suffix = 'md' }: EditorProps) => {
   }
 
   return (
-    <div className="flex flex-col h-full relative">
+    <div className="flex flex-col h-full relative max-w-full overflow-hidden">
       {isMarkdown && (
         <div className="flex justify-end items-center pb-4 absolute top-2 right-2 z-10">
           <button
@@ -41,7 +42,7 @@ const Editor = ({ content, onChange, onSave, suffix = 'md' }: EditorProps) => {
         </div>
       )}
 
-      <div className="flex-1 relative" onKeyDown={handleKeyDown}>
+      <div className="flex-1 relative overflow-x-hidden" onKeyDown={handleKeyDown}>
         {isMarkdown && isPreviewMode ? (
           <div className="h-full overflow-auto p-4 prose prose-invert max-w-none">
             <MarkdownPreview   
@@ -50,11 +51,6 @@ const Editor = ({ content, onChange, onSave, suffix = 'md' }: EditorProps) => {
               className='markdown-preview'
             />
           </div>
-          // <WYSIWYG_Editor
-          //     initialValue={content}
-          //     onChange={onChange}
-          //     placeholder="Start writing..."
-          //   />
         ) : (
           isMarkdown ? (
             <CodeEditor
@@ -65,6 +61,19 @@ const Editor = ({ content, onChange, onSave, suffix = 'md' }: EditorProps) => {
               style={{ fontSize: '16px', backgroundColor: '#1f2937', color: '#E5E7EB', fontFamily: 'Consolas' }}
               placeholder="Start writing..."
               data-color-mode="dark"
+              rehypePlugins={[
+                [
+                  rehypeRewrite,
+                  {
+                    rewrite: (node:any, index:number, parent:any ) => {
+                      // console.log(node.type, node.value, node.properties?.className)
+                      if (node.type === "text") {
+                        node.value = node.value.replace(/&quot;/g, '"')
+                      }
+                    }
+                  }
+                ]
+              ]}
             />
           ) : (
             <textarea

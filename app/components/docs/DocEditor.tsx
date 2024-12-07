@@ -80,17 +80,17 @@ const DocumentEditor = ({ path, type }: DocumentEditorProps) => {
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex justify-between items-center pb-4 p-2 border-b border-gray-700">
-        <div className="flex items-baseline gap-2">
-          <h2 className="text-xl font-semibold text-gray-200 truncate">{path.slice(0, -suffixLength)}</h2>
+    <div className="flex flex-col h-full max-w-full">
+      <div className="flex justify-between items-center pb-4 p-2 border-b border-gray-700 overflow-x-hidden">
+        <div className="flex items-baseline gap-2 min-w-0">
+          <h2 className="text-xl font-semibold text-gray-200 truncate max-w-[60vw]">{path.slice(0, -suffixLength)}</h2>
           {hasUnsavedChanges ? (
-            <span className="text-xs text-gray-500">未保存</span>
+            <span className="text-xs text-gray-500 shrink-0">未保存</span>
           ) : (
-            <span className="text-xs text-gray-500">已保存</span>
+            <span className="text-xs text-gray-500 shrink-0">已保存</span>
           )}
         </div>
-        <div className="text-xs text-gray-500">
+        <div className="text-xs text-gray-500 shrink-0">
           Ctrl+S 保存 {suffix === 'md' && '| Ctrl+P 预览'}
         </div>
       </div>

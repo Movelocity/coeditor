@@ -30,7 +30,7 @@ const Banner = ({
   return (
     <>
       <div className={cn("fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-sm border-b border-gray-800", className)}>
-        <div className="h-16 px-4 max-w-7xl mx-auto">
+        <div className="h-16 px-4 mx-auto">
           {showTabs ? (
             <Tabs 
               defaultValue={defaultTab}

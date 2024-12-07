@@ -11,11 +11,30 @@ interface DocsPanelProps {
 const DocsPanel = ({ type = 'private' }: DocsPanelProps) => {
   const [selectedDoc, setSelectedDoc] = useState<string | undefined>(undefined)
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isNarrowScreen, setIsNarrowScreen] = useState(false)
+
+  // Check screen width on mount and window resize
+  useEffect(() => {
+    const checkScreenWidth = () => {
+      setIsNarrowScreen(window.innerWidth < 768)
+    }
+    
+    checkScreenWidth()
+    window.addEventListener('resize', checkScreenWidth)
+    return () => window.removeEventListener('resize', checkScreenWidth)
+  }, [])
 
   // reset selected doc when type changes
   useEffect(() => {
     setSelectedDoc('')
   }, [type])
+
+  // Auto collapse on narrow screen when doc is selected
+  useEffect(() => {
+    if (selectedDoc && isNarrowScreen) {
+      setIsCollapsed(true)
+    }
+  }, [selectedDoc, isNarrowScreen])
 
   const handleSelectDoc = (path: string) => {
     console.log('select doc', path)
@@ -37,7 +56,7 @@ const DocsPanel = ({ type = 'private' }: DocsPanelProps) => {
           </div>
         }
         rightPanel={
-          <div className="h-full bg-gray-800 rounded-lg overflow-hidden">
+          <div className="h-full bg-gray-800 rounded-lg overflow-y-scroll">
             {selectedDoc ? (
               <DocumentEditor path={selectedDoc} type={type} />
             ) : (

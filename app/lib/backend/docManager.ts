@@ -1,4 +1,5 @@
 import { readUserFile, saveUserFile, listUserFiles } from './userFiles'
+import { FileItem } from '@/lib/types'
 import path from 'path'
 
 export class DocumentManager {

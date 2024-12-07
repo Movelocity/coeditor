@@ -1,4 +1,6 @@
 import { useState, useCallback } from 'react'
+import { FaCircleChevronLeft, FaCircleChevronRight } from "react-icons/fa6";
+// import { ChevronLeft, ChevronRight } from 'react-icons'
 
 interface ResizableProps {
   leftPanel: React.ReactNode
@@ -25,12 +27,30 @@ export const Resizable = ({ leftPanel, rightPanel, collapsed, onCollapse }: Resi
     setWidth(Math.max(200, Math.min(newWidth, 600)))
   }, [isResizing])
 
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    setIsResizing(true)
+  }, [])
+
+  const handleTouchEnd = useCallback(() => {
+    setIsResizing(false)
+  }, [])
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!isResizing) return
+    const touch = e.touches[0]
+    const newWidth = touch.clientX
+    setWidth(Math.max(200, Math.min(newWidth, 600)))
+  }, [isResizing])
+
   return (
     <div 
       className="flex h-[calc(90vh-1rem)]"
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
     >
       <div
         className={`transition-all duration-300 ${
@@ -42,13 +62,20 @@ export const Resizable = ({ leftPanel, rightPanel, collapsed, onCollapse }: Resi
       </div>
       
       <div
-        className="w-1 bg-gray-800 hover:bg-sky-600 cursor-col-resize flex items-center"
+        className="w-1 bg-gray-800 hover:bg-sky-600 cursor-col-resize flex items-center relative"
         onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
       >
         <button
           onClick={() => onCollapse(!collapsed)}
-          className="w-4 h-12 bg-gray-700 hover:bg-gray-600 rounded-full flex items-center justify-center"
+          className="absolute -right-4 w-8 h-16 bg-gray-700 hover:bg-gray-600 rounded-r-lg flex items-center justify-center touch-manipulation"
+          aria-label={collapsed ? "Expand panel" : "Collapse panel"}
         >
+          {collapsed ? (
+            <FaCircleChevronRight className="w-5 h-5 text-gray-300" />
+          ) : (
+            <FaCircleChevronLeft className="w-5 h-5 text-gray-300" />
+          )}
         </button>
       </div>
 

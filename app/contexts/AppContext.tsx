@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-
+import { API_BASE_PATH } from '@/lib/constants'
 type Theme = 'light' | 'dark'
 type User = { id: string; username: string } | null
 
@@ -24,7 +24,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const checkAuthStatus = async () => {
       console.log('check auth status')
       try {
-        const response = await fetch('/api/auth/check')
+        const response = await fetch(`${API_BASE_PATH}/auth/check`)
         if (response.ok) {
           const data = await response.json()
           setUser(data)

@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import DocumentList from '@/components/docs/DocList'
 import DocumentEditor from '@/components/docs/DocEditor'
 import { Resizable } from "@/components/ui/Resizable"
@@ -12,6 +12,7 @@ const DocsPanel = ({ type = 'private' }: DocsPanelProps) => {
   const [selectedDoc, setSelectedDoc] = useState<string | undefined>(undefined)
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isNarrowScreen, setIsNarrowScreen] = useState(false)
+  const userManualToggle = useRef(false)
 
   // Check screen width on mount and window resize
   useEffect(() => {
@@ -31,7 +32,7 @@ const DocsPanel = ({ type = 'private' }: DocsPanelProps) => {
 
   // Auto collapse on narrow screen when doc is selected
   useEffect(() => {
-    if (selectedDoc && isNarrowScreen) {
+    if (selectedDoc && isNarrowScreen && !userManualToggle.current) {
       setIsCollapsed(true)
     }
   }, [selectedDoc, isNarrowScreen])
@@ -41,11 +42,20 @@ const DocsPanel = ({ type = 'private' }: DocsPanelProps) => {
     setSelectedDoc(path)
   }
 
+  const handleCollapse = (collapsed: boolean) => {
+    userManualToggle.current = true
+    setIsCollapsed(collapsed)
+    // Reset the manual toggle flag after a short delay
+    setTimeout(() => {
+      userManualToggle.current = false
+    }, 100)
+  }
+
   return (
     <div className="h-[calc(100vh-theme(spacing.32))]">
       <Resizable
         collapsed={isCollapsed}
-        onCollapse={setIsCollapsed}
+        onCollapse={handleCollapse}
         leftPanel={
           <div className="h-full bg-gray-900 rounded-l-lg relative">
             <DocumentList 

@@ -38,8 +38,8 @@ const DocumentEditor = ({ path, type }: DocumentEditorProps) => {
     lastSavedContentRef.current = ''
   }, [path, type])
 
-  const suffix = path.split('.').pop() || 'md'
-
+  const suffix = path.split('.').pop() || ''
+  const suffixLength = !suffix ? 0 : suffix.length+1 // +1 for the dot
   useEffect(() => {
     const loadDocument = async () => {
       if (!path || !user?.id) return
@@ -83,7 +83,7 @@ const DocumentEditor = ({ path, type }: DocumentEditorProps) => {
     <div className="flex flex-col h-full">
       <div className="flex justify-between items-center pb-4 p-2 border-b border-gray-700">
         <div className="flex items-baseline gap-2">
-          <h2 className="text-xl font-semibold text-gray-200 truncate">{path}</h2>
+          <h2 className="text-xl font-semibold text-gray-200 truncate">{path.slice(0, -suffixLength)}</h2>
           {hasUnsavedChanges ? (
             <span className="text-xs text-gray-500">未保存</span>
           ) : (

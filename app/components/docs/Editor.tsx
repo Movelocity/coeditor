@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import MarkdownPreview from '@uiw/react-markdown-preview'
 import CodeEditor from '@uiw/react-textarea-code-editor'
 import '@uiw/react-markdown-preview/markdown.css'
-import styles from './Editor.module.css'
 
 import { WYSIWYG_Editor } from '@/components/wysiwyg/Editor'
 
@@ -48,7 +47,7 @@ const Editor = ({ content, onChange, onSave, suffix = 'md' }: EditorProps) => {
             <MarkdownPreview   
               source={content} 
               style={{ backgroundColor: '#1f2937', color: '#E5E7EB' }}
-              className={styles['markdown-preview']}
+              className='markdown-preview'
             />
           </div>
           // <WYSIWYG_Editor

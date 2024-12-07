@@ -29,7 +29,7 @@ const NotesPage = () => {
     <PageTransition>
       <div className="px-4">
         <Banner 
-          title="Online Editor"
+          title="CoEditor"
           description="记录您的想法和灵感"
           username={user?.username}
           showTabs

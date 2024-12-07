@@ -11,39 +11,21 @@ interface EditorProps {
   onChange: (content: string) => void
   onSave: () => void
   suffix?: string
+  isPreview?: boolean
 }
 
-const Editor = ({ content, onChange, onSave, suffix = 'md' }: EditorProps) => {
-  const [isPreviewMode, setIsPreviewMode] = useState(true)
-  const isMarkdown = suffix === 'md'
-
+const Editor = ({ content, onChange, onSave, suffix = 'md', isPreview = false }: EditorProps) => {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 's') {
       e.preventDefault()
       onSave()
     }
-    if ((e.metaKey || e.ctrlKey) && e.key === 'p') {
-      console.log('preview')
-      e.preventDefault()
-      setIsPreviewMode(prev => !prev)
-    }
   }
 
   return (
     <div className="flex flex-col h-full relative max-w-full overflow-hidden">
-      {isMarkdown && (
-        <div className="flex justify-end items-center pb-4 absolute top-2 right-2 z-10">
-          <button
-            onClick={() => setIsPreviewMode(prev => !prev)}
-            className="px-3 py-1 text-sm bg-gray-800 hover:bg-gray-700 rounded-sm text-gray-200"
-          >
-            {isPreviewMode ? '编辑' : '预览'}
-          </button>
-        </div>
-      )}
-
       <div className="flex-1 relative overflow-x-hidden" onKeyDown={handleKeyDown}>
-        {isMarkdown && isPreviewMode ? (
+        {suffix === 'md' && isPreview ? (
           <div className="h-full overflow-auto p-4 prose prose-invert max-w-none">
             <MarkdownPreview   
               source={content} 
@@ -52,7 +34,7 @@ const Editor = ({ content, onChange, onSave, suffix = 'md' }: EditorProps) => {
             />
           </div>
         ) : (
-          isMarkdown ? (
+          suffix === 'md' ? (
             <CodeEditor
               value={content}
               language="markdown"

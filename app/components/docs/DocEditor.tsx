@@ -16,6 +16,7 @@ const DocumentEditor = ({ path, type }: DocumentEditorProps) => {
   const [isSaving, setIsSaving] = useState(false)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const lastSavedContentRef = useRef('')
+  const [isPreviewMode, setIsPreviewMode] = useState(true)
 
   useEffect(() => {
     setHasUnsavedChanges(content !== lastSavedContentRef.current)
@@ -75,6 +76,18 @@ const DocumentEditor = ({ path, type }: DocumentEditorProps) => {
     }
   }, [content, path, user?.id, type, hasUnsavedChanges])
 
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'p') {
+      e.preventDefault()
+      setIsPreviewMode(prev => !prev)
+    }
+  }, [])
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [handleKeyDown])
+
   if (isLoading) {
     return <div className="flex items-center justify-center h-full text-gray-400">Loading document...</div>
   }
@@ -88,6 +101,14 @@ const DocumentEditor = ({ path, type }: DocumentEditorProps) => {
             <span className="text-xs text-gray-500 shrink-0">未保存</span>
           ) : (
             <span className="text-xs text-gray-500 shrink-0">已保存</span>
+          )}
+          {suffix === 'md' && (
+            <button
+              onClick={() => setIsPreviewMode(prev => !prev)}
+              className="px-3 py-1 text-sm bg-gray-800 hover:bg-gray-700 rounded-sm text-gray-200"
+            >
+              {isPreviewMode ? '编辑' : '预览'}
+            </button>
           )}
         </div>
         <div className="text-xs text-gray-500 shrink-0">
@@ -104,6 +125,7 @@ const DocumentEditor = ({ path, type }: DocumentEditorProps) => {
         onChange={setContent}
         onSave={handleSave}
         suffix={suffix}
+        isPreview={isPreviewMode}
       />
     </div>
   )

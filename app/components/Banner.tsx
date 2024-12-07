@@ -39,11 +39,11 @@ const Banner = ({
               onValueChange={onTabChange}
             >
               <div className="flex items-center justify-between h-full">
-                <div className="flex items-center space-x-4">
+                <div className="flex items-baseline md:items-center space-x-4 flex-col md:flex-row">
                   <h1 className="text-xl font-bold text-gray-200">{title}</h1>
                   <p className="text-sm text-gray-400">{description}</p>
                 </div>
-                <TabsList className="grid grid-cols-2 w-[200px]">
+                <TabsList className="grid grid-cols-2 w-[150px] md:w-[200px]">
                   <TabsTrigger value="public">Public</TabsTrigger>
                   <TabsTrigger value="private">Private</TabsTrigger>
                 </TabsList>

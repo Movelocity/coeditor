@@ -53,4 +53,18 @@ export const createDocument = async (userId: string | undefined, fileName: strin
   }
 
   return path
+}
+
+export const renameDocument = async (userId: string | undefined, oldPath: string, newPath: string, type: 'public' | 'private' = 'private'): Promise<void> => {
+  const requestUserId = getUserIdForRequest(userId, type)
+  const response = await fetch(`/api/docs/${requestUserId}/rename`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ oldPath, newPath })
+  })
+  
+  if (!response.ok) {
+    const data = await response.json()
+    throw new Error(data.error || 'Failed to rename document')
+  }
 } 

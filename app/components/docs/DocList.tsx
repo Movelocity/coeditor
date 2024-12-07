@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useApp } from '@/contexts/AppContext'
 import { FileItem } from '@/lib/types'
-import { fetchUserDocuments, createDocument } from '@/lib/frontend/docs'
-import { FiPlus } from "react-icons/fi";
+import { fetchUserDocuments, createDocument, renameDocument } from '@/lib/frontend/docs'
+import { FiPlus, FiEdit2 } from "react-icons/fi";
 import { IoMdDocument } from "react-icons/io";
 
 interface DocumentListProps {
@@ -56,13 +56,32 @@ const DocumentList = ({ onSelect, selectedPath, type }: DocumentListProps) => {
     }
   }
 
+  const handleRenameDocument = async (file: FileItem) => {
+    try {
+      const newName = prompt('输入新的文件名:', file.name)
+      if (!newName || newName === file.name) return
+
+      const oldPath = file.path
+      const dirPath = oldPath.substring(0, oldPath.lastIndexOf('/') + 1) || ''
+      const newPath = dirPath + newName + (file.suffix ? '.' + file.suffix : '')
+
+      await renameDocument(user?.id, oldPath, newPath, type)
+      await loadDocuments()
+      if (selectedPath === oldPath) {
+        onSelect(newPath)
+      }
+    } catch (err: any) {
+      console.error('Failed to rename document:', err)
+      alert(err.message || '重命名失败')
+    }
+  }
+
   if (isLoading) {
     return <div className="text-gray-400 p-4">Loading documents...</div>
   }
 
   return (
     <div className="p-4 space-y-2 h-full overflow-y-auto">
-      {/* New Document Button */}
       <button
         onClick={handleCreateDocument}
         className="flex items-center space-x-2 w-full p-2 rounded-md hover:bg-gray-700/50 text-gray-400"
@@ -71,22 +90,35 @@ const DocumentList = ({ onSelect, selectedPath, type }: DocumentListProps) => {
         <span>New Document</span>
       </button>
 
-      {/* Document List */}
       {files.map((file) => (
         <div
           key={file.path}
-          onClick={() => onSelect(file.path)}
           className={`flex items-center p-2 rounded-md cursor-pointer transition-colors
             ${selectedPath === file.path ? 'bg-gray-700' : 'hover:bg-gray-600/50'}`}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && onSelect(file.path)}
         >
-          <span className="text-gray-200 truncate flex-1 flex flex-row items-center">
-            <IoMdDocument className="w-4 h-4 mr-2" />
-            {file.name}
-          </span>
-          <span className="text-gray-400 text-sm ml-2">{file.suffix}</span>
+          <div
+            onClick={() => onSelect(file.path)}
+            className="flex-1 flex items-center"
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Enter' && onSelect(file.path)}
+          >
+            <span className="text-gray-200 truncate flex items-center">
+              <IoMdDocument className="w-4 h-4 mr-2" />
+              {file.name}
+            </span>
+            <span className="text-gray-400 text-sm ml-2">{file.suffix}</span>
+          </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              handleRenameDocument(file)
+            }}
+            className="p-1 text-gray-400 hover:text-gray-200 hover:bg-gray-600 rounded"
+            title="重命名"
+          >
+            <FiEdit2 className="w-4 h-4" />
+          </button>
         </div>
       ))}
     </div>

@@ -1,4 +1,5 @@
 import { FileItem } from '@/lib/types'
+import { API_BASE_PATH } from '@/lib/constants'
 
 const getUserIdForRequest = (userId: string | undefined, type: 'public' | 'private'): string => {
   if (type === 'public') return 'public'
@@ -7,7 +8,7 @@ const getUserIdForRequest = (userId: string | undefined, type: 'public' | 'priva
 
 export const fetchUserDocuments = async (userId: string | undefined, type: 'public' | 'private' = 'private'): Promise<FileItem[]> => {
   const requestUserId = getUserIdForRequest(userId, type)
-  const response = await fetch(`/api/docs/${requestUserId}/list`)
+  const response = await fetch(`${API_BASE_PATH}/docs/${requestUserId}/list`)
   if (!response.ok) {
     throw new Error('Failed to fetch documents')
   }
@@ -17,7 +18,7 @@ export const fetchUserDocuments = async (userId: string | undefined, type: 'publ
 
 export const fetchDocument = async (userId: string | undefined, path: string, type: 'public' | 'private' = 'private'): Promise<string> => {
   const requestUserId = getUserIdForRequest(userId, type)
-  const response = await fetch(`/api/docs/${requestUserId}/${path}`)
+  const response = await fetch(`${API_BASE_PATH}/docs/${requestUserId}/${path}`)
   if (!response.ok) {
     throw new Error('Failed to load document')
   }
@@ -27,7 +28,7 @@ export const fetchDocument = async (userId: string | undefined, path: string, ty
 
 export const saveDocument = async (userId: string | undefined, path: string, content: string, type: 'public' | 'private' = 'private'): Promise<void> => {
   const requestUserId = getUserIdForRequest(userId, type)
-  const response = await fetch(`/api/docs/${requestUserId}/${path}`, {
+  const response = await fetch(`${API_BASE_PATH}/docs/${requestUserId}/${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ content })
@@ -42,7 +43,7 @@ export const createDocument = async (userId: string | undefined, fileName: strin
   const requestUserId = getUserIdForRequest(userId, type)
   const path = fileName.includes('.') ? fileName : `${fileName}.md`
 
-  const response = await fetch(`/api/docs/${requestUserId}/${path}`, {
+  const response = await fetch(`${API_BASE_PATH}/docs/${requestUserId}/${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ content: path })
@@ -57,7 +58,7 @@ export const createDocument = async (userId: string | undefined, fileName: strin
 
 export const renameDocument = async (userId: string | undefined, oldPath: string, newPath: string, type: 'public' | 'private' = 'private'): Promise<void> => {
   const requestUserId = getUserIdForRequest(userId, type)
-  const response = await fetch(`/api/docs/${requestUserId}/rename`, {
+  const response = await fetch(`${API_BASE_PATH}/docs/${requestUserId}/rename`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ oldPath, newPath })

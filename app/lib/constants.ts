@@ -11,3 +11,5 @@ export const USER_FILES_DIR = join(DATA_DIR, 'userFiles')
 
 export const USERS_FILE = join(DATA_DIR, 'users.json')
 // console.log("userfile", USERS_FILE)
+
+export const API_BASE_PATH = '/coeditor/api'

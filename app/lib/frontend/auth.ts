@@ -7,9 +7,10 @@ type AuthResponse = {
   }
   token: string
 }
+import { API_BASE_PATH } from '@/lib/constants'
 
 export const login = async (email: string, username: string, password: string): Promise<AuthResponse> => {
-  const response = await fetch('/api/auth/login', {
+  const response = await fetch(`${API_BASE_PATH}/auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -26,7 +27,7 @@ export const login = async (email: string, username: string, password: string): 
 }
 
 export const register = async (email: string, username: string, password: string): Promise<AuthResponse> => {
-  const response = await fetch('/api/auth/register', {
+  const response = await fetch(`${API_BASE_PATH}/auth/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

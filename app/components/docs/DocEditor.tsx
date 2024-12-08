@@ -16,7 +16,7 @@ const DocumentEditor = ({ path, type }: DocumentEditorProps) => {
   const [isSaving, setIsSaving] = useState(false)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const lastSavedContentRef = useRef('')
-  const [isPreviewMode, setIsPreviewMode] = useState(true)
+  const [isPreviewMode, setIsPreviewMode] = useState(false)
 
   useEffect(() => {
     setHasUnsavedChanges(content !== lastSavedContentRef.current)
@@ -93,27 +93,19 @@ const DocumentEditor = ({ path, type }: DocumentEditorProps) => {
   }
 
   return (
-    <div className="flex flex-col h-full max-w-full">
-      <div className="flex justify-between items-center pb-4 p-2 border-b border-gray-700 overflow-x-hidden">
-        <div className="flex items-baseline gap-2 min-w-0">
-          <h2 className="text-xl font-semibold text-gray-200 truncate max-w-[60vw]">{path.slice(0, -suffixLength)}</h2>
-          {hasUnsavedChanges ? (
-            <span className="text-xs text-gray-500 shrink-0">未保存</span>
-          ) : (
-            <span className="text-xs text-gray-500 shrink-0">已保存</span>
-          )}
-          {suffix === 'md' && (
-            <button
-              onClick={() => setIsPreviewMode(prev => !prev)}
-              className="px-3 py-1 text-sm bg-gray-800 hover:bg-gray-700 rounded-sm text-gray-200"
-            >
-              {isPreviewMode ? '编辑' : '预览'}
-            </button>
-          )}
-        </div>
-        <div className="text-xs text-gray-500 shrink-0">
-          Ctrl+S 保存 {suffix === 'md' && '| Ctrl+P 预览'}
-        </div>
+    <div className="flex flex-col h-full max-w-full relative">
+      <div className="absolute top-2 right-2 flex items-center gap-2 z-10">
+        {suffix === 'md' && (
+          <button
+            onClick={() => setIsPreviewMode(prev => !prev)}
+            className="px-3 py-1 text-sm bg-gray-800 hover:bg-gray-700 rounded-sm text-gray-200 opacity-70 hover:opacity-100"
+          >
+            {isPreviewMode ? '编辑' : '预览'}
+          </button>
+        )}
+        <span className="text-xs text-gray-500 opacity-70">
+          {hasUnsavedChanges ? '未保存' : '已保存'}
+        </span>
       </div>
 
       {error && (

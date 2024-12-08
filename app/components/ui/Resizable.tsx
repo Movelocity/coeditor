@@ -1,6 +1,4 @@
 import { useState, useCallback } from 'react'
-import { FaCircleChevronLeft, FaCircleChevronRight } from "react-icons/fa6";
-// import { ChevronLeft, ChevronRight } from 'react-icons'
 
 interface ResizableProps {
   leftPanel: React.ReactNode
@@ -44,7 +42,7 @@ export const Resizable = ({ leftPanel, rightPanel, collapsed, onCollapse }: Resi
 
   return (
     <div 
-      className="flex h-[calc(90vh-1rem)]"
+      className="flex h-full"
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
@@ -65,19 +63,7 @@ export const Resizable = ({ leftPanel, rightPanel, collapsed, onCollapse }: Resi
         className="w-1 bg-gray-800 hover:bg-sky-600 cursor-col-resize flex items-center relative"
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
-      >
-        <button
-          onClick={() => onCollapse(!collapsed)}
-          className="absolute -right-4 w-5 h-12 bg-gray-700 hover:bg-gray-600 rounded-r-lg flex items-center justify-center touch-manipulation z-10"
-          aria-label={collapsed ? "Expand panel" : "Collapse panel"}
-        >
-          {collapsed ? (
-            <FaCircleChevronRight className="w-4 h-4 text-gray-300" />
-          ) : (
-            <FaCircleChevronLeft className="w-4 h-4 text-gray-300" />
-          )}
-        </button>
-      </div>
+      />
 
       <div className="flex-1">
         {rightPanel}

@@ -162,4 +162,32 @@ export const unauthorized = () => {
     { error: '未授权访问' },
     { status: 401 }
   )
+}
+
+export const checkAuth = async () => {
+  try {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('auth_token')?.value
+
+    if (!token) {
+      return { id: 'public', username: '' }
+    }
+
+    const userId = verifyToken(token)
+    if (!userId) {
+      throw new Error('无效的认证令牌')
+    }
+
+    const user = await getUserById(userId)
+    if (!user) {
+      throw new Error('用户不存在')
+    }
+
+    return {
+      id: user.id,
+      username: user.username
+    }
+  } catch (error) {
+    throw error
+  }
 } 

@@ -5,23 +5,25 @@ import DocsPanel from '@/components/docs/DocsPanel'
 import { useRouter } from 'next/navigation'
 
 const NotesPage = () => {
-  const { user } = useApp()
+  const { user, setUser } = useApp()
   const router = useRouter()
-  const [currentTab, setCurrentTab] = useState<'public' | 'private'>(user?.id ? 'private' : 'public')
-
-  const handleTabChange = (tab: string) => {
-    if (tab === 'private' && !user?.username) {
-      router.push('/auth')
-      return
-    }
-    setCurrentTab(tab as 'public' | 'private')
-  }
+  const [currentTab, setCurrentTab] = useState<'public' | 'private'>(user?.id === 'public' ? 'public' : 'private')
 
   useEffect(() => {
-    // Update tab when user auth state changes
-    setCurrentTab(user?.id ? 'private' : 'public')
-    console.log('user', user)
-  }, [user?.id])
+    // Get tab from URL query parameter
+    const params = new URLSearchParams(window.location.search)
+    const tabFromUrl = params.get('type') as 'public' | 'private'
+    
+    if (tabFromUrl) {
+      if (tabFromUrl === 'public') {
+        setUser({ id: 'public', username: '' })
+      } else if (user?.username) {
+        // Only restore private if user is logged in
+        setUser(user)
+      }
+      setCurrentTab(tabFromUrl)
+    }
+  }, [])
 
   return (
     <DocsPanel type={currentTab} />

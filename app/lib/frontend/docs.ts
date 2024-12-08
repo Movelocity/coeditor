@@ -43,10 +43,13 @@ export const createDocument = async (userId: string | undefined, fileName: strin
   const requestUserId = getUserIdForRequest(userId, type)
   const path = fileName.includes('.') ? fileName : `${fileName}.md`
 
+  // Create initial content with a title and basic structure
+  const initialContent = `# ${fileName}\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n`
+
   const response = await fetch(`${API_BASE_PATH}/docs/${requestUserId}/${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content: path })
+    body: JSON.stringify({ content: initialContent })
   })
 
   if (!response.ok) {

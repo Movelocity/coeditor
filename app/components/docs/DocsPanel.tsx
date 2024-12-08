@@ -8,13 +8,14 @@ import { useApp } from '@/contexts/AppContext'
 import { useRouter } from 'next/navigation'
 import cn from 'classnames'
 import { FaChevronLeft } from "react-icons/fa";
+import { checkAuth } from '@/lib/frontend/auth'
 
 interface DocsPanelProps {
   type?: 'public' | 'private'
 }
 
 const DocsPanel = ({ type = 'private' }: DocsPanelProps) => {
-  const { user } = useApp()
+  const { user, setUser } = useApp()
   const [selectedDoc, setSelectedDoc] = useState<string | undefined>(undefined)
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isNarrowScreen, setIsNarrowScreen] = useState(false)
@@ -58,11 +59,23 @@ const DocsPanel = ({ type = 'private' }: DocsPanelProps) => {
     }, 100)
   }
 
-  const handleTabChange = (tab: string) => {
-    if (tab === 'private' && !user?.username) {
-      router.push('/auth')
-      return
+  const handleTabChange = async (tab: string) => {
+    if (tab === 'private') {
+      try {
+        const authUser = await checkAuth()
+        if (authUser.id === 'public') {
+          router.push('/auth')
+          return
+        }
+        setUser(authUser)
+      } catch (error) {
+        router.push('/auth')
+        return
+      }
+    } else if (tab === 'public') {
+      setUser({ id: 'public', username: '' })
     }
+    router.push(`/notes?type=${tab}`)
   }
 
   return (

@@ -41,4 +41,23 @@ export const register = async (email: string, username: string, password: string
   }
 
   return response.json()
+}
+
+export type CheckAuthResponse = {
+  id: string
+  username: string
+}
+
+export const checkAuth = async (): Promise<CheckAuthResponse> => {
+  const response = await fetch(`${API_BASE_PATH}/auth/check`, {
+    method: 'GET',
+    credentials: 'include'
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.error || '验证失败')
+  }
+
+  return response.json()
 } 

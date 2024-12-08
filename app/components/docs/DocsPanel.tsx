@@ -5,17 +5,15 @@ import DocumentEditor from '@/components/docs/DocEditor'
 import { Resizable } from "@/components/ui/Resizable"
 import Banner from '@/components/Banner'
 import { useApp } from '@/contexts/AppContext'
-import { useRouter } from 'next/navigation'
-import cn from 'classnames'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { FaChevronLeft } from "react-icons/fa";
-import { checkAuth } from '@/lib/frontend/auth'
 
-interface DocsPanelProps {
-  type?: 'public' | 'private'
-}
+interface DocsPanelProps {}
 
-const DocsPanel = ({ type = 'private' }: DocsPanelProps) => {
-  const { user, setUser } = useApp()
+const DocsPanel = ({}: DocsPanelProps) => {
+  const { user } = useApp()
+  const searchParams = useSearchParams()
+  const type = searchParams.get('mode') as 'public' | 'private' || 'private'
   const [selectedDoc, setSelectedDoc] = useState<string | undefined>(undefined)
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isNarrowScreen, setIsNarrowScreen] = useState(false)
@@ -53,29 +51,9 @@ const DocsPanel = ({ type = 'private' }: DocsPanelProps) => {
   const handleCollapse = (collapsed: boolean) => {
     userManualToggle.current = true
     setIsCollapsed(collapsed)
-    // Reset the manual toggle flag after a short delay
     setTimeout(() => {
       userManualToggle.current = false
     }, 100)
-  }
-
-  const handleTabChange = async (tab: string) => {
-    if (tab === 'private') {
-      try {
-        const authUser = await checkAuth()
-        if (authUser.id === 'public') {
-          router.push('/auth')
-          return
-        }
-        setUser(authUser)
-      } catch (error) {
-        router.push('/auth')
-        return
-      }
-    } else if (tab === 'public') {
-      setUser({ id: 'public', username: '' })
-    }
-    router.push(`/notes?type=${tab}`)
   }
 
   return (
@@ -85,7 +63,7 @@ const DocsPanel = ({ type = 'private' }: DocsPanelProps) => {
         onCollapse={handleCollapse}
         leftPanel={
           <div className="h-full bg-gray-900 rounded-l-lg relative flex flex-col">
-            <div className="p-2 border-b border-gray-800 flex flex-col gap-2">
+            <div className="p-2 border-b border-gray-800">
               <div className="flex items-center justify-between p-2">
                 <h1 className="text-lg font-semibold text-gray-200">CoEditor</h1>
                 <button
@@ -96,36 +74,11 @@ const DocsPanel = ({ type = 'private' }: DocsPanelProps) => {
                   <FaChevronLeft className="w-4 h-4 text-gray-400" />
                 </button>
               </div>
-              <div className="grid grid-cols-2 gap-1">
-                <button
-                  className={cn(
-                    "px-4 py-2 text-sm rounded-md transition-colors",
-                    type === 'public' 
-                      ? "bg-gray-800 text-gray-200" 
-                      : "text-gray-400 hover:text-gray-300"
-                  )}
-                  onClick={() => handleTabChange('public')}
-                >
-                  Public
-                </button>
-                <button
-                  className={cn(
-                    "px-4 py-2 text-sm rounded-md transition-colors",
-                    type === 'private' 
-                      ? "bg-gray-800 text-gray-200" 
-                      : "text-gray-400 hover:text-gray-300"
-                  )}
-                  onClick={() => handleTabChange('private')}
-                >
-                  Private
-                </button>
-              </div>
             </div>
             <div className="flex-1 overflow-hidden">
               <DocumentList 
                 onSelect={handleSelectDoc} 
                 selectedPath={selectedDoc}
-                type={type}
               />
             </div>
           </div>

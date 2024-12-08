@@ -64,7 +64,7 @@ endLine: 63
 - 全局错误处理
 
 相关代码：
-```typescript:app/contexts/AppContext.tsx
+```typescript:app/contextsContext.tsx
 startLine: 1
 endLine: 81
 ```

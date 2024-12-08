@@ -6,17 +6,17 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string; path: string[] }> }
 ) {
-  let { userId, path } = await params
+  const { userId: originalUserId, path } = await params
   const searchParams = request.nextUrl.searchParams
   const mode = searchParams.get('mode') || 'private'
 
+  const userId = mode === 'public' ? 'public' : originalUserId
+
   if (mode !== 'public') {
     const authUserId = await validateAuthToken()
-    if (!authUserId || authUserId !== userId) {
+    if (!authUserId || authUserId !== originalUserId) {
       return createErrorResponse('未授权访问', 401)
     }
-  } else {
-    userId = 'public'
   }
 
   const docManager = new DocumentManager(userId)
@@ -38,17 +38,17 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string; path: string[] }> }
 ) {
-  let { userId, path } = await params
+  const { userId: originalUserId, path } = await params
   const searchParams = request.nextUrl.searchParams
   const mode = searchParams.get('mode') || 'private'
 
+  const userId = mode === 'public' ? 'public' : originalUserId
+
   if (mode !== 'public') {
     const authUserId = await validateAuthToken()
-    if (!authUserId || authUserId !== userId) {
+    if (!authUserId || authUserId !== originalUserId) {
       return createErrorResponse('未授权访问', 401)
     }
-  } else {
-    userId = 'public'
   }
 
   try {

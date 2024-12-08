@@ -8,9 +8,7 @@ import { useApp } from '@/contexts/AppContext'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FaChevronLeft } from "react-icons/fa";
 
-interface DocsPanelProps {}
-
-const DocsPanel = ({}: DocsPanelProps) => {
+const DocsPanel = () => {
   const { user } = useApp()
   const searchParams = useSearchParams()
   const type = searchParams.get('mode') as 'public' | 'private' || 'private'

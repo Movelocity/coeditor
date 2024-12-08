@@ -6,31 +6,31 @@ import Editor from './Editor'
 interface DocumentEditorProps {
   path: string
   type: 'public' | 'private'
+  isPreviewMode: boolean
+  onUnsavedChanges: (hasChanges: boolean) => void
 }
 
-const DocumentEditor = ({ path, type }: DocumentEditorProps) => {
+const DocumentEditor = ({ path, type, isPreviewMode, onUnsavedChanges }: DocumentEditorProps) => {
   const { user } = useApp()
   const [content, setContent] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string>()
   const [isSaving, setIsSaving] = useState(false)
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const lastSavedContentRef = useRef('')
-  const [isPreviewMode, setIsPreviewMode] = useState(false)
 
   useEffect(() => {
-    setHasUnsavedChanges(content !== lastSavedContentRef.current)
-  }, [content])
+    onUnsavedChanges(content !== lastSavedContentRef.current)
+  }, [content, onUnsavedChanges])
 
   useEffect(() => {
-    if (!hasUnsavedChanges) return
+    if (content === lastSavedContentRef.current) return
 
     const autoSaveTimer = setInterval(() => {
       handleSave()
     }, 20000)
 
     return () => clearInterval(autoSaveTimer)
-  }, [hasUnsavedChanges])
+  }, [content, lastSavedContentRef.current])
 
   useEffect(() => {
     setContent('')
@@ -62,31 +62,19 @@ const DocumentEditor = ({ path, type }: DocumentEditorProps) => {
   }, [path, user?.id])
 
   const handleSave = useCallback(async () => {
-    if (!hasUnsavedChanges) return
+    if (content === lastSavedContentRef.current) return
     
     try {
       setIsSaving(true)
       await saveDocument(user?.id, path, content, type)
       lastSavedContentRef.current = content
-      setHasUnsavedChanges(false)
+      onUnsavedChanges(false)
     } catch (err) {
       console.error('Failed to save document:', err)
     } finally {
       setIsSaving(false)
     }
-  }, [content, path, user?.id, type, hasUnsavedChanges])
-
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'p') {
-      e.preventDefault()
-      setIsPreviewMode(prev => !prev)
-    }
-  }, [])
-
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [handleKeyDown])
+  }, [content, path, user?.id, type, onUnsavedChanges])
 
   if (isLoading) {
     return <div className="flex items-center justify-center h-full text-gray-400">Loading document...</div>
@@ -94,20 +82,6 @@ const DocumentEditor = ({ path, type }: DocumentEditorProps) => {
 
   return (
     <div className="flex flex-col h-full max-w-full relative">
-      <div className="absolute top-2 right-2 flex items-center gap-2 z-10">
-        {suffix === 'md' && (
-          <button
-            onClick={() => setIsPreviewMode(prev => !prev)}
-            className="px-3 py-1 text-sm bg-gray-800 hover:bg-gray-700 rounded-sm text-gray-200 opacity-70 hover:opacity-100"
-          >
-            {isPreviewMode ? '编辑' : '预览'}
-          </button>
-        )}
-        <span className="text-xs text-gray-500 opacity-70">
-          {hasUnsavedChanges ? '未保存' : '已保存'}
-        </span>
-      </div>
-
       {error && (
         <div className="text-red-500 text-sm mb-4">{error}</div>
       )}

@@ -3,10 +3,10 @@ import { useState, useEffect, useRef } from 'react'
 import DocumentList from '@/components/docs/DocList'
 import DocumentEditor from '@/components/docs/DocEditor'
 import { Resizable } from "@/components/ui/Resizable"
-import Banner from '@/components/Banner'
 import { useApp } from '@/contexts/AppContext'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FaChevronLeft } from "react-icons/fa";
+import Banner from '@/components/Banner'
 
 const DocsPanel = () => {
   const { user } = useApp()
@@ -17,6 +17,8 @@ const DocsPanel = () => {
   const [isNarrowScreen, setIsNarrowScreen] = useState(false)
   const userManualToggle = useRef(false)
   const router = useRouter()
+  const [isPreviewMode, setIsPreviewMode] = useState(false)
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 
   // Check screen width on mount and window resize
   useEffect(() => {
@@ -84,15 +86,24 @@ const DocsPanel = () => {
         rightPanel={
           <div className="h-full bg-gray-800 rounded-lg flex flex-col">
             <Banner 
-              title={selectedDoc}
+              title={selectedDoc || "CoEditor"}
               description="记录您的想法和灵感"
               username={user?.username}
               showChevron={isCollapsed}
               onChevronClick={() => handleCollapse(false)}
+              showPreviewToggle={selectedDoc?.endsWith('.md')}
+              isPreviewMode={isPreviewMode}
+              onPreviewToggle={() => setIsPreviewMode(prev => !prev)}
+              hasUnsavedChanges={hasUnsavedChanges}
             />
             <div className="flex-1 overflow-y-auto">
               {selectedDoc ? (
-                <DocumentEditor path={selectedDoc} type={type} />
+                <DocumentEditor 
+                  path={selectedDoc} 
+                  type={type}
+                  isPreviewMode={isPreviewMode}
+                  onUnsavedChanges={setHasUnsavedChanges}
+                />
               ) : (
                 <div className="flex items-center justify-center h-full text-gray-400">
                   Select a document to edit

@@ -103,14 +103,6 @@ const DocumentList = ({ onSelect, selectedPath }: DocumentListProps) => {
     router.push(newUrl.href)
   }
 
-  if (isInitialLoad) {
-    return <div className="flex-1" />
-  }
-
-  if (isLoading) {
-    return <div className="text-gray-400 p-4">Loading documents...</div>
-  }
-
   return (
     <div className="flex flex-col h-full">
       <div className="p-2 border-b border-gray-800">

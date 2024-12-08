@@ -17,7 +17,7 @@ const DocumentList = ({ onSelect, selectedPath }: DocumentListProps) => {
   const { user, setUser } = useApp()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const type = searchParams.get('mode') as 'public' | 'private' || 'private'
+  const mode = searchParams.get('mode') as 'public' | 'private' || 'private'
   const [files, setFiles] = useState<FileItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string>()
@@ -25,7 +25,7 @@ const DocumentList = ({ onSelect, selectedPath }: DocumentListProps) => {
   const loadDocuments = useCallback(async () => {
     try {
       setIsLoading(true)
-      const documents = await fetchUserDocuments(user?.id, type)
+      const documents = await fetchUserDocuments(user?.id, mode)
       setFiles(documents)
       setError(undefined)
     } catch (err) {
@@ -34,7 +34,7 @@ const DocumentList = ({ onSelect, selectedPath }: DocumentListProps) => {
     } finally {
       setIsLoading(false)
     }
-  }, [user?.id, type])
+  }, [user?.id, mode])
 
   useEffect(() => {
     loadDocuments()
@@ -45,7 +45,7 @@ const DocumentList = ({ onSelect, selectedPath }: DocumentListProps) => {
       const fileName = prompt('Enter document name:')
       if (!fileName) return
 
-      const path = await createDocument(user?.id, fileName, type)
+      const path = await createDocument(user?.id, fileName, mode)
       await loadDocuments()
       onSelect(path)
     } catch (err) {
@@ -70,7 +70,7 @@ const DocumentList = ({ onSelect, selectedPath }: DocumentListProps) => {
       const dirPath = oldPath.substring(0, oldPath.lastIndexOf('/') + 1) || ''
       const newPath = dirPath + newName + (file.suffix ? '.' + file.suffix : '')
 
-      await renameDocument(user?.id, oldPath, newPath, type)
+      await renameDocument(user?.id, oldPath, newPath, mode)
       await loadDocuments()
       if (selectedPath === oldPath) {
         onSelect(newPath)
@@ -114,7 +114,7 @@ const DocumentList = ({ onSelect, selectedPath }: DocumentListProps) => {
           <button
             className={cn(
               "px-4 py-2 text-sm rounded-md transition-colors",
-              type === 'public' 
+              mode === 'public' 
                 ? "bg-gray-800 text-gray-200" 
                 : "text-gray-400 hover:text-gray-300"
             )}
@@ -125,7 +125,7 @@ const DocumentList = ({ onSelect, selectedPath }: DocumentListProps) => {
           <button
             className={cn(
               "px-4 py-2 text-sm rounded-md transition-colors",
-              type === 'private' 
+              mode === 'private' 
                 ? "bg-gray-800 text-gray-200" 
                 : "text-gray-400 hover:text-gray-300"
             )}

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { authenticateUser, unauthorized } from '@/lib/backend/authMiddleware'
+import { authenticateUser, unauthorized } from '@/lib/backend/auth'
 import { listUserFiles } from '@/lib/backend/userFiles'
 
 export async function GET(

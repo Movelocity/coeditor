@@ -20,6 +20,7 @@ const DocumentList = ({ onSelect, selectedPath }: DocumentListProps) => {
   const mode = searchParams.get('mode') as 'public' | 'private' || 'private'
   const [files, setFiles] = useState<FileItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
   const [error, setError] = useState<string>()
 
   const loadDocuments = useCallback(async () => {
@@ -33,6 +34,7 @@ const DocumentList = ({ onSelect, selectedPath }: DocumentListProps) => {
       console.error(err)
     } finally {
       setIsLoading(false)
+      setIsInitialLoad(false)
     }
   }, [user?.id, mode])
 
@@ -94,13 +96,15 @@ const DocumentList = ({ onSelect, selectedPath }: DocumentListProps) => {
         router.push('/auth')
         return
       }
-    } else if (tab === 'public') {
-      setUser({ id: 'public', username: '' })
     }
     
     const newUrl = new URL(window.location.href)
     newUrl.searchParams.set('mode', tab)
     router.push(newUrl.href)
+  }
+
+  if (isInitialLoad) {
+    return <div className="flex-1" />
   }
 
   if (isLoading) {

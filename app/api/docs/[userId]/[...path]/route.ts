@@ -6,7 +6,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string; path: string[] }> }
 ) {
-  const { userId, path } = await params
+  let { userId, path } = await params
   const searchParams = request.nextUrl.searchParams
   const mode = searchParams.get('mode') || 'private'
 
@@ -15,6 +15,8 @@ export async function GET(
     if (!authUserId || authUserId !== userId) {
       return createErrorResponse('未授权访问', 401)
     }
+  } else {
+    userId = 'public'
   }
 
   const docManager = new DocumentManager(userId)
@@ -36,7 +38,7 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string; path: string[] }> }
 ) {
-  const { userId, path } = await params
+  let { userId, path } = await params
   const searchParams = request.nextUrl.searchParams
   const mode = searchParams.get('mode') || 'private'
 
@@ -45,6 +47,8 @@ export async function POST(
     if (!authUserId || authUserId !== userId) {
       return createErrorResponse('未授权访问', 401)
     }
+  } else {
+    userId = 'public'
   }
 
   try {

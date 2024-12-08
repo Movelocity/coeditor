@@ -6,7 +6,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
 ) {
-  const { userId } = await params
+  let { userId } = await params
   const searchParams = request.nextUrl.searchParams
   const mode = searchParams.get('mode') || 'private'
   const path = searchParams.get('path') || ''
@@ -16,6 +16,8 @@ export async function GET(
     if (!authUserId || authUserId !== userId) {
       return unauthorized()
     }
+  } else {
+    userId = 'public'
   }
 
   try {

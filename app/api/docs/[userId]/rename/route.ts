@@ -6,7 +6,7 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
 ) {
-  const { userId } = await params
+  let { userId } = await params
   const searchParams = request.nextUrl.searchParams
   const mode = searchParams.get('mode') || 'private'
   
@@ -15,6 +15,8 @@ export async function POST(
     if (!authUserId || authUserId !== userId) {
       return createErrorResponse('未授权访问', 401)
     }
+  } else {
+    userId = 'public'
   }
 
   try {

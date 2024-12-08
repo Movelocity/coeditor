@@ -142,4 +142,103 @@ export class DocManager {
       return { error: `重命名文件失败: ${message}`, status: 500 }
     }
   }
+
+  /**
+   * 获取文档或目录的详细信息
+   * @param filePath - 文档或目录路径
+   * @returns 包含文件信息的操作结果
+   */
+  async getDocumentInfo(filePath: string): Promise<OperationResult<FileItem>> {
+    try {
+      if (!this.validatePath(filePath)) {
+        return { error: '无效的文件路径', status: 400 }
+      }
+
+      const fullPath = path.join(USER_FILES_DIR, this.userId, filePath)
+      const stats = await fs.stat(fullPath)
+      const isDirectory = stats.isDirectory()
+      const name = path.basename(filePath)
+      const suffix = !isDirectory ? name.split('.').pop() || '' : ''
+      const nameWithoutSuffix = isDirectory ? name : name.slice(0, -(suffix.length ? suffix.length + 1 : 0))
+
+      return {
+        data: {
+          name: nameWithoutSuffix,
+          suffix,
+          type: isDirectory ? 'directory' : 'file',
+          path: filePath,
+          createdAt: stats.birthtime.toISOString(),
+          modifiedAt: stats.mtime.toISOString()
+        }
+      }
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+        return { error: '文件或目录不存在', status: 404 }
+      }
+      return { error: '获取文件信息失败', status: 500 }
+    }
+  }
+
+  /**
+   * 创建新目录
+   * @param dirPath - 目录路径
+   * @returns 操作结果
+   */
+  async createDirectory(dirPath: string): Promise<OperationResult<void>> {
+    try {
+      if (!this.validatePath(dirPath)) {
+        return { error: '无效的目录路径', status: 400 }
+      }
+
+      const fullPath = path.join(USER_FILES_DIR, this.userId, dirPath)
+
+      // 检查目录是否已存在
+      try {
+        await fs.access(fullPath)
+        return { error: '目录已存在', status: 409 }
+      } catch {
+        // 目录不存在，可以继续创建
+      }
+
+      await fs.mkdir(fullPath, { recursive: true })
+      return { success: true }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '未知错误'
+      return { error: `创建目录失败: ${message}`, status: 500 }
+    }
+  }
+
+  /**
+   * 删除文档或目录
+   * @param targetPath - 要删除的文档或目录路径
+   * @returns 操作结果
+   */
+  async deleteDocument(targetPath: string): Promise<OperationResult<void>> {
+    try {
+      if (!this.validatePath(targetPath)) {
+        return { error: '无效的路径', status: 400 }
+      }
+
+      const fullPath = path.join(USER_FILES_DIR, this.userId, targetPath)
+      
+      // 检查文件/目录是否存在
+      try {
+        await fs.access(fullPath)
+      } catch {
+        return { error: '文件或目录不存在', status: 404 }
+      }
+
+      const stats = await fs.stat(fullPath)
+      if (stats.isDirectory()) {
+        await fs.rm(fullPath, { recursive: true })
+      } else {
+        await fs.unlink(fullPath)
+      }
+
+      return { success: true }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '未知错误'
+      return { error: `删除失败: ${message}`, status: 500 }
+    }
+  }
 } 

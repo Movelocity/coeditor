@@ -22,12 +22,24 @@ export class FileOperationError extends Error {
  */
 export const saveUserFile = async (userId: string, filePath: string, data: string): Promise<void> => {
   const fullPath = join(USER_FILES_DIR, userId, filePath);
-  const dirPath = join(USER_FILES_DIR, userId, dirname(filePath));
+  const dirPath = dirname(fullPath);
   
   try {
+    // 确保目录存在，如果不存在则创建
     await fs.mkdir(dirPath, { recursive: true });
+
+    // 检查是否是目录路径
+    const stats = await fs.stat(dirPath);
+    if (!stats.isDirectory()) {
+      throw new FileOperationError('指定路径不是目录', 400);
+    }
+
+    // 写入文件
     await fs.writeFile(fullPath, data, 'utf8');
   } catch (error) {
+    if (error instanceof FileOperationError) {
+      throw error;
+    }
     const message = error instanceof Error ? error.message : '未知错误';
     throw new FileOperationError(`保存文件失败: ${message}`, 500);
   }
@@ -69,12 +81,16 @@ export const listUserFiles = async (userId: string, subPath: string = ''): Promi
         const isDirectory = entry.isDirectory();
         const suffix = !isDirectory ? entry.name.split('.').pop() || '' : '';
         const nameWithoutSuffix = isDirectory ? entry.name : entry.name.slice(0, -(suffix.length ? suffix.length + 1 : 0));
+        const fullPath = join(dirPath, entry.name);
+        const stats = await fs.stat(fullPath);
         
         return {
           name: nameWithoutSuffix,
           suffix,
           type: isDirectory ? 'directory' : 'file',
-          path: join(subPath, entry.name)
+          path: join(subPath, entry.name),
+          createdAt: stats.birthtime.toISOString(),
+          modifiedAt: stats.mtime.toISOString()
         };
       })
     );

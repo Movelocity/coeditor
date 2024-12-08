@@ -48,6 +48,10 @@ export type FileItem = {
   type: 'file' | 'directory';
   /** 文件路径 */
   path: string;
+  /** 创建时间 */
+  createdAt: string;
+  /** 最后修改时间 */
+  modifiedAt: string;
 }
 
 /**

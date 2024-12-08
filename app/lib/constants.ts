@@ -1,6 +1,14 @@
 import { join } from 'path'
 import os from 'os'
 
+// 前后端共享的常量
+/**
+ * API请求的基础路径
+ */
+export const API_BASE_PATH: string = '/coeditor/api'
+
+
+// 后端使用的常量
 /**
  * 应用数据存储的根目录
  * Windows: C:/tmp/notes-app
@@ -25,8 +33,3 @@ export const USER_FILES_DIR: string = join(DATA_DIR, 'userFiles')
  * 用户数据存储文件路径
  */
 export const USERS_FILE: string = join(DATA_DIR, 'users.json')
-
-/**
- * API请求的基础路径
- */
-export const API_BASE_PATH: string = '/coeditor/api'

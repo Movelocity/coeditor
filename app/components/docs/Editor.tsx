@@ -79,7 +79,7 @@ const Editor = ({ content, onChange, onSave, suffix = 'md', isPreview = false }:
             value={content}
             height="100%"
             onChange={onChange}
-            extensions={[getLanguageExtension(suffix), dracula, consolas_font]}
+            extensions={[getLanguageExtension(suffix), dracula, consolas_font, EditorView.lineWrapping]}
             theme="dark"
             style={{ fontSize: '12px' }}
             basicSetup={{

@@ -21,8 +21,10 @@ export const Resizable = ({ leftPanel, rightPanel, collapsed, onCollapse }: Resi
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!isResizing) return
-    const newWidth = e.clientX
-    setWidth(Math.max(200, Math.min(newWidth, 600)))
+    const containerRect = e.currentTarget.getBoundingClientRect()
+    const maxWidth = containerRect.width * 0.8 // Limit to 80% of container width
+    const newWidth = e.clientX - containerRect.left
+    setWidth(Math.max(200, Math.min(newWidth, maxWidth)))
   }, [isResizing])
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -35,9 +37,11 @@ export const Resizable = ({ leftPanel, rightPanel, collapsed, onCollapse }: Resi
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (!isResizing) return
+    const containerRect = e.currentTarget.getBoundingClientRect()
+    const maxWidth = containerRect.width * 0.8 // Limit to 80% of container width
     const touch = e.touches[0]
-    const newWidth = touch.clientX
-    setWidth(Math.max(200, Math.min(newWidth, 600)))
+    const newWidth = touch.clientX - containerRect.left
+    setWidth(Math.max(200, Math.min(newWidth, maxWidth)))
   }, [isResizing])
 
   return (

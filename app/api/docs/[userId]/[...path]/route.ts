@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 import { validateAuthToken, createAuthResponse, createErrorResponse } from '@/lib/backend/auth'
-import { DocumentManager } from '@/lib/backend/docManager'
+import { DocManager } from '@/lib/backend/docManager'
 
 export async function GET(
   request: NextRequest,
@@ -14,14 +14,10 @@ export async function GET(
     }
   }
 
-  const docManager = new DocumentManager(userId)
+  const docManager = new DocManager(userId)
   const filePath = path.join('/')
-
-  if (!docManager.validatePath(filePath)) {
-    return createErrorResponse('无效的文件路径', 400)
-  }
-
   const result = await docManager.readDocument(filePath)
+  
   if ('error' in result) {
     return createErrorResponse(result.error??"err", result.status)
   }
@@ -48,14 +44,10 @@ export async function POST(
       return createErrorResponse('内容不能为空', 400)
     }
 
-    const docManager = new DocumentManager(userId)
+    const docManager = new DocManager(userId)
     const filePath = path.join('/')
-
-    if (!docManager.validatePath(filePath)) {
-      return createErrorResponse('无效的文件路径', 400)
-    }
-
     const result = await docManager.saveDocument(filePath, content)
+    
     if ('error' in result) {
       return createErrorResponse(result.error??"err", result.status)
     }

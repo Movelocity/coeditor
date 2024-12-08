@@ -18,7 +18,7 @@ type OperationResult<T> = {
  * 文档管理器类
  * 负责处理用户文档的读取、保存、列表和重命名等操作
  */
-export class DocumentManager {
+export class DocManager {
   private userId: string
 
   /**

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { authenticateUser, unauthorized } from '@/lib/backend/auth'
-import { listUserFiles } from '@/lib/backend/userFiles'
+import { DocManager } from '@/lib/backend/docManager'
 
 export async function GET(
   request: NextRequest,
@@ -18,8 +18,17 @@ export async function GET(
   const path = searchParams.get('path') || ''
 
   try {
-    const files = await listUserFiles(userId, path)
-    return NextResponse.json({ files })
+    const docManager = new DocManager(userId)
+    const result = await docManager.listDocuments(path)
+    
+    if ('error' in result) {
+      return NextResponse.json(
+        { error: result.error },
+        { status: result.status || 500 }
+      )
+    }
+    
+    return NextResponse.json({ files: result.data })
   } catch (error) {
     return NextResponse.json(
       { error: '获取文件列表失败' },

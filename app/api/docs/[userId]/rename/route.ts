@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 import { validateAuthToken, createAuthResponse, createErrorResponse } from '@/lib/backend/auth'
-import { DocumentManager } from '@/lib/backend/docManager'
+import { DocManager } from '@/lib/backend/docManager'
 
 export async function POST(
   request: NextRequest,
@@ -21,7 +21,7 @@ export async function POST(
       return createErrorResponse('缺少必要参数', 400)
     }
 
-    const docManager = new DocumentManager(userId)
+    const docManager = new DocManager(userId)
     const result = await docManager.renameDocument(oldPath, newPath)
     
     if ('error' in result) {

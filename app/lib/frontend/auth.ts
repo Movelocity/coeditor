@@ -1,4 +1,4 @@
-import { AuthResponse, ApiResponse, User, SimpleUser } from '@/lib/types'
+import { AuthResponse, ApiResponse, SimpleUser } from '@/lib/types'
 import { API_BASE_PATH } from '@/lib/constants'
 
 /**

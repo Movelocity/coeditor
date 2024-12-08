@@ -7,15 +7,16 @@ export async function GET(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   const { userId } = await params
-  if (userId !== 'public') {
+  const searchParams = request.nextUrl.searchParams
+  const mode = searchParams.get('mode') || 'private'
+  const path = searchParams.get('path') || ''
+
+  if (mode !== 'public') {
     const authUserId = await authenticateUser()
     if (!authUserId || authUserId !== userId) {
       return unauthorized()
     }
   }
-
-  const searchParams = request.nextUrl.searchParams
-  const path = searchParams.get('path') || ''
 
   try {
     const files = await listUserFiles(userId, path)

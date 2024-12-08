@@ -7,7 +7,10 @@ export async function GET(
   { params }: { params: Promise<{ userId: string; path: string[] }> }
 ) {
   const { userId, path } = await params
-  if (userId !== 'public') {
+  const searchParams = request.nextUrl.searchParams
+  const mode = searchParams.get('mode') || 'private'
+
+  if (mode !== 'public') {
     const authUserId = await validateAuthToken()
     if (!authUserId || authUserId !== userId) {
       return createErrorResponse('未授权访问', 401)
@@ -34,8 +37,10 @@ export async function POST(
   { params }: { params: Promise<{ userId: string; path: string[] }> }
 ) {
   const { userId, path } = await params
-  console.log("userId: ", userId, "path: ", path)
-  if (userId !== 'public') {
+  const searchParams = request.nextUrl.searchParams
+  const mode = searchParams.get('mode') || 'private'
+
+  if (mode !== 'public') {
     const authUserId = await validateAuthToken()
     if (!authUserId || authUserId !== userId) {
       return createErrorResponse('未授权访问', 401)

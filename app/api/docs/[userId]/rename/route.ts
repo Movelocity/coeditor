@@ -7,8 +7,10 @@ export async function POST(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   const { userId } = await params
+  const searchParams = request.nextUrl.searchParams
+  const mode = searchParams.get('mode') || 'private'
   
-  if (userId !== 'public') {
+  if (mode !== 'public') {
     const authUserId = await validateAuthToken()
     if (!authUserId || authUserId !== userId) {
       return createErrorResponse('未授权访问', 401)

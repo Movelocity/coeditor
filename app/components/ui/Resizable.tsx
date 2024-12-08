@@ -46,7 +46,7 @@ export const Resizable = ({ leftPanel, rightPanel, collapsed, onCollapse }: Resi
 
   return (
     <div 
-      className="flex h-full"
+      className="flex h-full max-w-[100vw]"
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
@@ -69,7 +69,7 @@ export const Resizable = ({ leftPanel, rightPanel, collapsed, onCollapse }: Resi
         onTouchStart={handleTouchStart}
       />
 
-      <div className="flex-1">
+      <div className="flex-1 max-w-[100vw]">
         {rightPanel}
       </div>
     </div>

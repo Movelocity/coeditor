@@ -1,5 +1,5 @@
 import { DocumentAccessType, FileItem } from '@/lib/types'
-import { FiSearch, FiFolder, FiFile } from 'react-icons/fi'
+import { FiSearch, FiFolder, FiFile, FiPlus } from 'react-icons/fi'
 
 interface SidebarProps {
   files: FileItem[]
@@ -9,6 +9,7 @@ interface SidebarProps {
   onAccessTypeChange: (type: DocumentAccessType) => void
   onSearchChange: (query: string) => void
   onFileSelect: (file: FileItem) => void
+  onCreateNew: () => void
 }
 
 const Sidebar = ({
@@ -19,6 +20,7 @@ const Sidebar = ({
   onAccessTypeChange,
   onSearchChange,
   onFileSelect,
+  onCreateNew,
 }: SidebarProps) => {
   const filteredFiles = files.filter(file => 
     file.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -50,6 +52,17 @@ const Sidebar = ({
             Private
           </button>
         </div>
+      </div>
+
+      {/* Create new document button */}
+      <div className="p-4 border-b border-gray-700">
+        <button
+          onClick={onCreateNew}
+          className="w-full flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+        >
+          <FiPlus className="mr-2" />
+          New Document
+        </button>
       </div>
 
       {/* Search bar */}

@@ -1,12 +1,19 @@
-import { registerUser, generateToken, createAuthResponse, createErrorResponse } from '@/lib/backend/auth'
+import { registerUser, generateToken } from '@/lib/backend/auth'
 import { cookies } from 'next/headers'
+import { NextResponse } from 'next/server'
+import { ApiResponse, AuthResponse } from '@/lib/types'
+
 export async function POST(request: Request) {
   try {
     const { email, username, password } = await request.json()
     const user = await registerUser(email, username, password)
     
     if (!user) {
-      return createErrorResponse('该邮箱或用户名已被注册', 400)
+      const response: ApiResponse = {
+        error: '该邮箱或用户名已被注册',
+        status: 400
+      }
+      return NextResponse.json(response, { status: 400 })
     }
 
     const token = generateToken(user.id)
@@ -16,9 +23,26 @@ export async function POST(request: Request) {
       secure: process.env.NODE_ENV === 'production',
       maxAge: 60 * 60 * 24 * 7 // 7天
     })
-    // return createAuthResponse({ user, token })
-    return createAuthResponse({ id: user.id, username: user.username, token })
+
+    const response: ApiResponse<AuthResponse> = {
+      data: {
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          createdAt: user.createdAt
+        },
+        token
+      },
+      success: true
+    }
+    
+    return NextResponse.json(response)
   } catch (error) {
-    return createErrorResponse('注册失败', 500)
+    const response: ApiResponse = {
+      error: '注册失败',
+      status: 500
+    }
+    return NextResponse.json(response, { status: 500 })
   }
 } 

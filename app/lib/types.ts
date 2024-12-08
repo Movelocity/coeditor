@@ -15,6 +15,12 @@ export interface User {
 }
 
 /**
+ * 简化的用户信息类型
+ * 用于前端展示和基本身份标识
+ */
+export type SimpleUser = Pick<User, 'id' | 'username'>;
+
+/**
  * 登录表单数据类型
  */
 export type LoginForm = {

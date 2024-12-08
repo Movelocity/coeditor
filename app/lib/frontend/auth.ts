@@ -1,4 +1,4 @@
-import { AuthResponse, ApiResponse } from '@/lib/types'
+import { AuthResponse, ApiResponse, User, SimpleUser } from '@/lib/types'
 import { API_BASE_PATH } from '@/lib/constants'
 
 /**
@@ -63,29 +63,58 @@ export const register = async (email: string, username: string, password: string
 }
 
 /**
- * 检查用户是否已登录
- * @returns 如果已登录返回true，否则返回false
+ * 检查用户是否已登录并获取用户信息
+ * @returns 用户信息，如果未登录则返回公共用户
+ * @throws {ApiError} 当验证失败时抛出
  */
-export const checkAuth = async (): Promise<boolean> => {
+export const checkAuth = async (): Promise<SimpleUser> => {
   try {
     const response = await fetch(`${API_BASE_PATH}/auth/check`)
-    return response.ok
-  } catch {
-    return false
+    const data: ApiResponse<SimpleUser> = await response.json()
+    
+    if (!response.ok) {
+      throw new ApiError(data.error || '验证失败', response.status)
+    }
+    
+    return data.data || { id: 'public', username: '' }
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error
+    }
+    return { id: 'public', username: '' }
   }
 }
 
 /**
  * 用户登出
  * @returns 如果登出成功返回true
+ * @throws {ApiError} 当登出失败时抛出
  */
 export const logout = async (): Promise<boolean> => {
   try {
     const response = await fetch(`${API_BASE_PATH}/auth/logout`, {
       method: 'POST'
     })
-    return response.ok
-  } catch {
-    return false
+    
+    if (!response.ok) {
+      throw new ApiError('登出失败', response.status)
+    }
+    
+    return true
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error
+    }
+    throw new ApiError('登出失败', 500)
   }
+}
+
+/**
+ * 获取当前认证令牌
+ * @returns 认证令牌，如果不存在则返回null
+ */
+export const getAuthToken = (): string | null => {
+  const cookies = document.cookie.split(';')
+  const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('auth_token='))
+  return tokenCookie ? tokenCookie.split('=')[1] : null
 } 

@@ -14,11 +14,22 @@ import { dracula } from '@uiw/codemirror-theme-dracula'
 import {EditorView} from '@codemirror/view'
 
 const consolas_font = EditorView.theme({
+  "&.cm-editor": {
+    backgroundColor: 'transparent !important',
+  },
   ".cm-content": {
     fontFamily: "Consolas",// Monaco, Lucida Console, monospace",
     fontSize: "16px",
-    backgroundColor: '#1f2937',
-    color: 'white',
+    backgroundColor: 'transparent !important',
+    color: 'white'
+  },
+  ".cm-layer.cm-selectionLayer .cm-selectionBackground": {
+    /**
+     *   .cm-content.cm-lineWrapping
+     *   .cm-layer.cm-layer-above.cm-cursorLayer
+     * → .cm-layer.cm-selectionLayer (z-index: -2) 
+     */
+    backgroundColor: "#11446699 !important"
   },
   ".cm-foldGutter": {
     fontSize: "18px"
@@ -75,7 +86,7 @@ const Editor = ({ content, onChange, onSave, suffix = 'md', isPreview = false }:
 
   return (
     <div className="flex flex-col h-full relative max-w-full overflow-hidden">
-      <div className="flex-1 relative overflow-x-hidden" onKeyDown={handleKeyDown}>
+      <div className="flex-1 relative overflow-x-hidden bg-gray-800" onKeyDown={handleKeyDown}>
         {suffix === 'md' && isPreview ? (
           <div className="h-full overflow-auto p-4 prose prose-invert max-w-none">
             <MarkdownPreview   

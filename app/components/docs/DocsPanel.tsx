@@ -63,7 +63,7 @@ const DocsPanel = () => {
         onCollapse={handleCollapse}
         leftPanel={
           <div className="h-full bg-gray-900 rounded-l-lg relative flex flex-col">
-            <div className="p-2 border-b border-gray-800">
+            <div className="p-2">
               <div className="flex items-center justify-between p-2">
                 <h1 className="text-lg font-semibold text-gray-200">CoEditor</h1>
                 <button

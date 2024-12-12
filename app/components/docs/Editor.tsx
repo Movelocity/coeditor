@@ -12,12 +12,22 @@ import '@uiw/react-markdown-preview/markdown.css'
 import { dracula } from '@uiw/codemirror-theme-dracula'
 
 import {EditorView} from '@codemirror/view'
+
 const consolas_font = EditorView.theme({
   ".cm-content": {
-    fontFamily: "Consolas, Monaco, Lucida Console, monospace",
+    fontFamily: "Consolas",// Monaco, Lucida Console, monospace",
+    fontSize: "16px",
+    backgroundColor: '#1f2937',
+    color: 'white',
+  },
+  ".cm-foldGutter": {
     fontSize: "18px"
   },
+  ".cm-gutter": {
+    backgroundColor: '#1f2937'
+  }
 });
+
 
 interface EditorProps {
   content: string

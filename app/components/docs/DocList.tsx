@@ -105,7 +105,7 @@ const DocumentList = ({ onSelect, selectedPath }: DocumentListProps) => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-2 border-b border-gray-800">
+      <div className="p-2">
         <div className="grid grid-cols-2 gap-1">
           <button
             className={cn(
